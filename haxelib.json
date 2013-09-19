@@ -1,0 +1,20 @@
+{
+	"name": "ffi",
+	"url" : "https://github.com/TopHattedCoder/hx-ffi/",
+	"license": "MIT",
+	"tags": [
+		"neko",
+		"cpp",
+		"native",
+		"ffi",
+		"binding"
+	],
+	"description": "Easy FFI for accessing native shared libraries",
+	"version": "0.0.1",
+	"releasenote": "Alpha release",
+	"contributors": [
+		"TopHattedCoder"
+	],
+	"dependencies": {
+	}
+}
