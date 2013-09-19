@@ -1,4 +1,7 @@
--main Test
--x test
+-main samples.sdl.Test
+-neko samples/sdl/test.n
 -lib ffi
--debug
+--next
+-D display
+-xml haxedoc.xml
+-main AllClasses

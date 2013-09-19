@@ -1,3 +1,4 @@
+package samples.sdl;
 import ffi.*;
 import ffi.lib.*;
 class Test {

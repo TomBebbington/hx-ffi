@@ -3,9 +3,10 @@ package ffi.lib;
 #if display
 /** A runtime libary **/
 extern class Library {
+	/** Loads the library matching the path or returns null if it could not be loaded **/
 	public static function load(path:String):Null<Library>;
 	/** Loads a symbol from the library **/
-	public inline function getSymbol(func:String):ffi.Function;
+	public function getSymbol(func:String):ffi.Function;
 	/** Closes the library. MUST be called after using it to avoid memory leaks **/
 	public function close():Void;
 }

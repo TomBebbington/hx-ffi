@@ -2,6 +2,15 @@ package ffi.lib;
 import haxe.macro.Type;
 import haxe.macro.Expr;
 import haxe.macro.*;
+#if display
+/** An easily extendible and portable quick way for defining a library in Haxe **/
+extern class EasyLibrary {
+	/** The underlying library **/
+	public var lib(default, null):Library;
+	/** Loads the library with the name/path or throws an error **/
+	public function new(name:String):Void;
+}
+#else
 @:autoBuild(ffi.lib.EasyLibrary.Builder.build()) class EasyLibrary {
 	public var lib(default, null):Library;
 	public function new(name:String) {
@@ -10,6 +19,8 @@ import haxe.macro.*;
 			throw 'Could not load library "$name"';
 	}
 }
+#end
+#if macro
 class Builder {
 	public var fields:Array<Field>;
 	public function new(fs:Array<Field>) {
@@ -94,3 +105,4 @@ class Builder {
 		return new Builder(fs).run();
 	}
 }
+#end

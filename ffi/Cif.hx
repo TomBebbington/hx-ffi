@@ -1,7 +1,7 @@
 package ffi;
 
 #if display
-/** Describes a function interface **/
+/** Describes a callable function's interface **/
 extern class Cif {
 	/** The type it returns **/
 	public var returnType(default, never):Type;
@@ -12,13 +12,13 @@ extern class Cif {
 	/** Prepares it for calling by providing type information to the API **/
 	public function prep(args:Array<Type>, ret:Type):Status;
 	/** Returns the result of calling fn with the arguments specified **/
-	public function call(fn:FunctionPointer, args:Array<Dynamic>):Dynamic;
+	public function call(fn:Function, args:Array<Dynamic>):Dynamic;
 	/** Returns a string representation of the function **/
 	public function toString():String;
 }
 #else
 import Type in HxType;
-/** Note: ABI is assumed to be JIT_ABI_DEFAULT**/
+/** Note: ABI is assumed to be JIT_ABI_DEFAULT **/
 abstract Cif(Dynamic) {
 	public var returnType(get, never):Type;
 	public var argTypes(get, never):Array<Type>;
@@ -32,9 +32,8 @@ abstract Cif(Dynamic) {
 		return HxType.createEnumIndex(Status, ffi_cif_prep(this, args, ret));
 	public inline function toString():String
 		return (argTypes.length == 0 ? "Void" : argTypes.map(Type.toString).join(" -> ")) + " -> " + returnType.toString();
-	public inline function call(fn:Function, args:Array<Dynamic>):Dynamic {
+	public inline function call(fn:Function, args:Array<Dynamic>):Dynamic
 		return ffi_cif_call(this, fn, args);
-	}
 	static var ffi_cif_get_arg_types:Dynamic = ffi.Util.load("cif_get_arg_types", 1);
 	static var ffi_cif_create:Dynamic = ffi.Util.load("cif_create", 0);
 	static var ffi_cif_call:Dynamic = ffi.Util.load("cif_call", 3);

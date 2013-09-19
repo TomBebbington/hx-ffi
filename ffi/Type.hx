@@ -46,7 +46,7 @@ extern class Type {
 	/** Signed native int type **/
 	public static var SINT(default, never):Type;
 	/** Pointer type **/
-	public static var Pointer(default, never):Type;
+	public static var POINTER(default, never):Type;
 	/** Void type **/
 	public static var TYPE_VOID(default, never):Int;
 	/** Native integer type **/
