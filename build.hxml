@@ -1,0 +1,4 @@
+-main Test
+-x test
+-lib ffi
+-debug
