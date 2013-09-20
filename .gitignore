@@ -1,2 +1,4 @@
 cpp/
+obj/
+all_objs
 *.n
