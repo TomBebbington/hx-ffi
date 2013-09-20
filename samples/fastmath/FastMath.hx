@@ -16,7 +16,9 @@ class FastMath extends ffi.lib.EasyLibrary {
 	public function ceil(f:Float):Float;
 	static function main() {
 		var m = new FastMath();
-		for(i in 1...100)
-			trace('${m.sqrt(i)} squared = $i');
+		for(a in Sys.args()) {
+			var i = Std.parseFloat(a);
+			Sys.println('square root of $i = ${m.sqrt(i)}');
+		}
 	}
 } 

@@ -12,6 +12,8 @@ extern class Pointer {
 }
 #else
 abstract Pointer(Dynamic) {
+	public inline function new(v:Dynamic)
+		this = v;
 	@:to public inline function getString() {
 		return ffi_get_str(this);
 	}

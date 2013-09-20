@@ -7,17 +7,23 @@ import haxe.macro.*;
 extern class EasyLibrary {
 	/** The underlying library **/
 	public var lib(default, null):Library;
+	/** The name of the library **/
+	public var name(default, null):String;
 	/** Loads the library with the name/path or throws an error **/
 	public function new(name:String):Void;
 }
 #else
 @:autoBuild(ffi.lib.EasyLibrary.Builder.build()) class EasyLibrary {
 	public var lib(default, null):Library;
+	public var name(default, null):String;
 	public function new(name:String) {
-		this.lib = Library.load(name);
+		this.name = name;
+		this.lib = try Library.load(name) catch(e:Dynamic) null;
 		if(lib == null)
 			throw 'Could not load library "$name"';
 	}
+	public inline function toString():String
+		return name;
 }
 #end
 #if macro
@@ -37,7 +43,6 @@ class Builder {
 			var ofc:Function = cast f.kind.getParameters()[0];
 			switch(f.kind) {
 				case FFun(fc):
-					var pr = new haxe.macro.Printer();
 					var ef = Reflect.copy(f);
 					ef.kind = FieldType.FFun(Reflect.copy(ofc));
 					var nfc:Function = ef.kind.getParameters()[0];
@@ -47,7 +52,7 @@ class Builder {
 					var of = Reflect.copy(f);
 					of.name = '_sym_${f.name}';
 					of.kind = FieldType.FVar(macro:ffi.Function);
-					inits.push(macro $i{of.name} = lib.getSymbol($v{f.name}));
+					inits.push(macro $i{of.name} = lib[$v{f.name}]);
 					nfs.push(of);
 					var cif = Reflect.copy(ef);
 					cif.name = '_cif_${f.name}';
@@ -55,12 +60,17 @@ class Builder {
 					inits.push(macro $i{cif.name} = new ffi.Cif());
 					nfs.push(cif);
 					inits.push(macro $i{cif.name}.prep(${{expr: EArrayDecl([for(a in ofc.args) toFFIType(a.type)]), pos: Context.currentPos()}}, ${toFFIType(f.kind.getParameters()[0].ret)}));
-					var fexpr = macro $i{cif.name}.call($i{of.name}, ${{pos: cif.pos, expr: EArrayDecl([for(a in nfc.args) macro $i{a.name}])}});
+					var fexpr = macro try $i{cif.name}.call($i{of.name}, ${{pos: cif.pos, expr: EArrayDecl([for(a in nfc.args) macro $i{a.name}])}}) catch(e:Dynamic) throw e+" in "+$v{f.name};
 					f.kind = FieldType.FFun({
 						ret: nfc.ret,
 						params: [],
 						args: nfc.args,
-						expr: (ComplexTypeTools.toString(nfc.ret) == "Void") ? fexpr : macro return $fexpr
+						expr: switch(nfc.ret) {
+							case macro:Void: fexpr;
+							case macro:String: macro return Pointer.toString($fexpr);
+							case macro:Bool: macro $fexpr > 0;
+							default: macro return $fexpr;
+						}
 					});
 					nfs.push(f);
 				default:
@@ -84,7 +94,7 @@ class Builder {
 	}
 	public function toHaxeType(c:ComplexType):ComplexType {
 		return switch(c) {
-			case macro:Int64, macro:haxe.Int64, macro:UInt64, macro:haxe.UInt64: macro:haxe.Int64;
+			case macro:Int64, macro:haxe.Int64, macro:UInt64, macro:haxe.UInt64, macro:Long, macro:ULong: macro:haxe.Int64;
 			case TPath({pack: [], params: [], name: name}) if(name.indexOf("Int") != -1): macro:Int;
 			case macro:Float, macro:Single: macro:Float;
 			case TPath({pack: [], params: _, name: "Pointer"}): macro:ffi.Pointer;
@@ -98,6 +108,7 @@ class Builder {
 			case macro:Single: macro ffi.Type.DOUBLE;
 			case TPath({pack: [], params: _, name: "Pointer"}):
 				macro ffi.Type.POINTER;
+			case macro:Bool: macro ffi.Type.UINT8;
 			case TPath({pack: [], params: [], name: name}):
 				var ename = name.toUpperCase();
 				if(StringTools.startsWith(ename, "INT"))

@@ -1438,6 +1438,10 @@
 	</class>
 	<class path="ffi.Util" params="" file="./ffi/Util.hx" extern="1"><haxe_doc>Some random utilities used around the library - do not use from outside the library</haxe_doc></class>
 	<class path="ffi.lib.EasyLibrary" params="" file="./ffi/lib/EasyLibrary.hx" extern="1">
+		<name public="1" set="null">
+			<c path="String"/>
+			<haxe_doc>The name of the library</haxe_doc>
+		</name>
 		<lib public="1" set="null">
 			<c path="ffi.lib.Library"/>
 			<haxe_doc>The underlying library</haxe_doc>
@@ -1459,17 +1463,13 @@
 			</f>
 			<haxe_doc>Loads the library matching the path or returns null if it could not be loaded</haxe_doc>
 		</load>
-		<close public="1" set="method">
-			<f a=""><x path="Void"/></f>
-			<haxe_doc>Closes the library. MUST be called after using it to avoid memory leaks</haxe_doc>
-		</close>
-		<getSymbol public="1" set="method">
+		<get public="1" set="method">
 			<f a="func">
 				<c path="String"/>
 				<c path="ffi.Function"/>
 			</f>
 			<haxe_doc>Loads a symbol from the library</haxe_doc>
-		</getSymbol>
+		</get>
 		<haxe_doc>A runtime libary</haxe_doc>
 	</class>
 	<class path="haxe.EnumTools" params="" file="/usr/lib/haxe/std/haxe/EnumTools.hx" extern="1">
