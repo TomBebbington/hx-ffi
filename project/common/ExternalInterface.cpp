@@ -128,9 +128,9 @@ DEFINE_PRIM(hx_ffi_cif_prep, 3);
 void* to_pointer(value val, ffi_type* t) {
 	switch(t -> type) {
 		PTR_TYPE(FFI_TYPE_INT, int, val_int)
-		PTR_TYPE(FFI_TYPE_FLOAT, float, val_float)
-		PTR_TYPE(FFI_TYPE_DOUBLE, double, val_float)
-		PTR_TYPE(FFI_TYPE_LONGDOUBLE, double, val_float)
+		PTR_TYPE(FFI_TYPE_FLOAT, float, val_number)
+		PTR_TYPE(FFI_TYPE_DOUBLE, double, val_number)
+		PTR_TYPE(FFI_TYPE_LONGDOUBLE, double, val_number)
 		PTR_TYPE(FFI_TYPE_UINT8, uint8_t, val_int)
 		PTR_TYPE(FFI_TYPE_SINT8, int8_t, val_int)
 		PTR_TYPE(FFI_TYPE_UINT16, uint16_t, val_int)

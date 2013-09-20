@@ -30,6 +30,10 @@ class Builder {
 		var nfs = [];
 		var inits = [];
 		for(f in fields) {
+			if(Lambda.has(f.access, AStatic) || Lambda.has(f.access, AInline)) {
+				nfs.push(f);
+				continue;
+			}
 			var ofc:Function = cast f.kind.getParameters()[0];
 			switch(f.kind) {
 				case FFun(fc):
@@ -59,7 +63,7 @@ class Builder {
 						expr: (ComplexTypeTools.toString(nfc.ret) == "Void") ? fexpr : macro return $fexpr
 					});
 					nfs.push(f);
-				default: Context.error("Invalid field type", f.pos);
+				default:
 			}
 		}
 		var libName:String = null;
@@ -90,6 +94,8 @@ class Builder {
 	public function toFFIType(c:ComplexType):Expr {
 		return switch(c) {
 			case macro:String: macro ffi.Type.POINTER;
+			case macro:Float: macro ffi.Type.DOUBLE;
+			case macro:Single: macro ffi.Type.DOUBLE;
 			case TPath({pack: [], params: _, name: "Pointer"}):
 				macro ffi.Type.POINTER;
 			case TPath({pack: [], params: [], name: name}):

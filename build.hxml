@@ -1,6 +1,13 @@
 -main samples.sdl.Test
 -neko samples/sdl/test.n
 -lib ffi
+-dce full
+--next
+-main samples.fastmath.FastMath
+-x samples/fastmath/run
+-lib ffi
+-dce full
+-debug
 --next
 -D display
 -xml haxedoc.xml

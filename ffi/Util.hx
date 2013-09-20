@@ -1,5 +1,10 @@
 package ffi;
+#if display
 /** Some random utilities used around the library - do not use from outside the library **/
+extern class Util {
+
+}
+#else
 @:allow(ffi)
 class Util {
 	static inline function toHaxe(v:Dynamic):Dynamic
@@ -23,3 +28,4 @@ class Util {
 	}
 	#end
 }
+#end
