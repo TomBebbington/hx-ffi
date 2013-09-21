@@ -21,4 +21,4 @@ __int16_t__ / __short__ 	| Int16	/ SInt16				| Int				| ffi.Type.SINT16
 __uint16_t__ / __ushort__ 	| UInt16						| Int				| ffi.Type.UINT16
 __int8_t__ / __char__ 		| Int8 / SInt8					| Int				| ffi.Type.SINT8
 __uint8_t__ / __uchar__ 	| UInt8							| Int				| ffi.Type.UINT8
-__struct__					| Struct<(ordered types...)>	| Array<Dynamic>	| ffi.Type.createStruct(...)
+__struct__					| Struct&lt;ordered types...&gt;| Array&lt;Dynamic&gt;	| ffi.Type.createStruct(...)
