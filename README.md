@@ -6,6 +6,10 @@ Type mappings
 -------------
 | C Type			| Haxe Type			| Runtime Haxe Type |
 |-------------------|-------------------|-------------------|
+| char*				| String			| String 			|
+| void*				| Pointer			| ffi.Pointer 		|
+| float				| Single			| Float 			|
+| double			| Float				| Float 			|
 | int 				| Int				| Int				|
 | uint 				| UInt				| Int				|
 | long 				| Int64				| haxe.Int64		|
