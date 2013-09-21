@@ -5,7 +5,7 @@ HxFFI is a Haxe library that allows you to quickly use native libraries quickly 
 Supported types
 ---------------
  C Type				| EasyLibrary Type			| Haxe Type			| FFI Type
---------------------|---------------------------|-------------------|---------------------------
+--------------------|:-------------------------:|-------------------|---------------------------
 void				| Void 						| Void 				| ffi.Type.VOID
 char*				| String					| String 			| ffi.Type.POINTER
 void*				| Pointer					| ffi.Pointer 		| ffi.Type.POINTER
