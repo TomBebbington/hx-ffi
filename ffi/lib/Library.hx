@@ -9,7 +9,6 @@ extern class Library {
 	public function get(func:String):ffi.Function;
 }
 #else
-using sys.FileSystem;
 import sys.io.*;
 abstract Library(Dynamic) {
 	public static inline function load(path:String):Library

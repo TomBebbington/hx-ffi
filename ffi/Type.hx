@@ -78,7 +78,7 @@ extern class Type {
 	/** Pointer type **/
 	public static var TYPE_POINTER(default, never):Int;
 	/** Creates a struct with the specified elements **/
-	public static function createStruct(elements:Array<String>):Type;
+	public static function createStruct(elements:Array<Type>):Type;
 	/** Return a string representation of the type **/
 	public function toString():String;
 }

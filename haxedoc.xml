@@ -1409,7 +1409,7 @@
 		</TYPE_POINTER>
 		<createStruct public="1" set="method" static="1">
 			<f a="elements">
-				<c path="Array"><c path="String"/></c>
+				<c path="Array"><c path="ffi.Type"/></c>
 				<c path="ffi.Type"/>
 			</f>
 			<haxe_doc>Creates a struct with the specified elements</haxe_doc>

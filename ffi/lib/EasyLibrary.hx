@@ -29,12 +29,40 @@ extern class EasyLibrary {
 #if macro
 class Builder {
 	public var fields:Array<Field>;
+	public var inits:Array<Expr>;
+	public var structs:Map<String, String>;
 	public function new(fs:Array<Field>) {
 		this.fields = fs;
+		this.structs = new Map();
+		this.inits = [];
+	}
+	function parseStruct(e:Expr):Expr {
+		return switch(e.expr) {
+			case EBlock(es):
+				var elements = [];
+				for(ie in es)
+					switch(ie.expr) {
+						case EVars(vars):
+							for(va in vars) {
+								elements.push(toFFIType(va.type));
+							}
+						default: throw "Bad struct";
+					}
+				return macro ffi.Type.createStruct(${{expr: EArrayDecl(elements), pos: e.pos}});
+			default: throw "Bad struct";
+		};
 	}
 	public function run():Array<Field> {
-		var nfs = [];
-		var inits = [];
+		var nfs:Array<Field> = [];
+		for(me in Context.getLocalClass().get().meta.get())
+			switch(me) {
+				case {name: ":struct", params: [{expr: EBinop(OpArrow, {expr:EConst(CIdent(structName))}, inner)}]}:
+					var structId = '_struct_${structName}';
+					nfs.push({pos: me.pos, name: structId, kind: FieldType.FVar(macro:ffi.Type)});
+					inits.push(macro $i{structId} = ${parseStruct(inner)});
+					structs.set(structName, structId);
+				default:
+			}
 		for(f in fields) {
 			if(Lambda.has(f.access, AStatic) || Lambda.has(f.access, AInline)) {
 				nfs.push(f);
@@ -67,7 +95,7 @@ class Builder {
 						args: nfc.args,
 						expr: switch(nfc.ret) {
 							case macro:Void: fexpr;
-							case macro:String: macro return Pointer.toString($fexpr);
+							case macro:String: macro return Pointer.getString($fexpr);
 							case macro:Bool: macro $fexpr > 0;
 							default: macro return $fexpr;
 						}
@@ -90,6 +118,16 @@ class Builder {
 			super($v{libName});
 			$initBlock;
 		}})});
+		trace(new haxe.macro.Printer().printTypeDefinition({
+			pos: Context.currentPos(),
+			params: [],
+			pack: [],
+			name: libName,
+			meta: [],
+			kind: TypeDefKind.TDClass(),
+			isExtern: false,
+			fields: nfs
+		}));
 		return nfs;
 	}
 	public function toHaxeType(c:ComplexType):ComplexType {
@@ -98,6 +136,7 @@ class Builder {
 			case TPath({pack: [], params: [], name: name}) if(name.indexOf("Int") != -1): macro:Int;
 			case macro:Float, macro:Single: macro:Float;
 			case TPath({pack: [], params: _, name: "Pointer"}): macro:ffi.Pointer;
+			case TPath({pack: [], params: [], name: name}) if(structs.exists(name)): macro:Dynamic;
 			default: c;
 		};
 	}
@@ -109,6 +148,8 @@ class Builder {
 			case TPath({pack: [], params: _, name: "Pointer"}):
 				macro ffi.Type.POINTER;
 			case macro:Bool: macro ffi.Type.UINT8;
+			case TPath({pack: [], params: [], name: name}) if(structs.exists(name)):
+				macro $i{structs.get(name)};
 			case TPath({pack: [], params: [], name: name}):
 				var ename = name.toUpperCase();
 				if(StringTools.startsWith(ename, "INT"))

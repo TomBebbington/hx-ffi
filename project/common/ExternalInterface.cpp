@@ -125,8 +125,10 @@ value hx_ffi_cif_prep(value v_cif, value v_args, value v_ret) {
 DEFINE_PRIM(hx_ffi_cif_prep, 3);
 
 #define PTR_TYPE(ffi, c, neko)		case ffi: return new c(neko(val));
+value from_pointer(void* ptr, ffi_type* t);
 void* to_pointer(value val, ffi_type* t) {
-	switch(t -> type) {
+	const uint type = t -> type;
+	switch(type) {
 		PTR_TYPE(FFI_TYPE_INT, int, val_int)
 		PTR_TYPE(FFI_TYPE_FLOAT, float, val_number)
 		PTR_TYPE(FFI_TYPE_DOUBLE, double, val_number)
@@ -138,6 +140,22 @@ void* to_pointer(value val, ffi_type* t) {
 		PTR_TYPE(FFI_TYPE_UINT32, uint32_t, val_int)
 		PTR_TYPE(FFI_TYPE_SINT32, int32_t, val_int)
 		PTR_TYPE(FFI_TYPE_POINTER, void*, val_data)
+		case FFI_TYPE_STRUCT: {
+			const uint size = t -> size;
+			uintptr_t v = (uintptr_t) malloc(size);
+			ffi_type** elem = t -> elements;
+			uint i = 0;
+			while(*elem != NULL) {
+				const ffi_type* curr = *elem;
+				const size_t size = curr -> size;
+				uintptr_t nptr = (uintptr_t) to_pointer(val_array_i(val, i), *elem);
+				memcpy((void*) v, (void*) nptr, size);
+				v += size;
+				elem++;
+				i++;
+			}
+			return (void*) v;
+		}
 		default:
 			return NULL;
 	}
@@ -159,8 +177,21 @@ value from_pointer(void* ptr, ffi_type* t) {
 		FROM_TYPE(FFI_TYPE_SINT32, int32_t, alloc_int)
 		case FFI_TYPE_POINTER:
 			return alloc_abstract(k_pointer, ptr);
+		case FFI_TYPE_STRUCT: {
+			uint size = 0;
+			while(t -> elements[size] != NULL)
+				size++;
+			value obj = alloc_array(size);
+			uintptr_t btrptr = (uintptr_t) ptr;
+			for(uint i=0, off = 0; i < size; i++) {
+				const ffi_type* curr = t -> elements[i];
+				val_array_set_i(obj, i, from_pointer((void*) btrptr, (ffi_type*) curr));
+				btrptr += curr -> size;
+			}
+			return obj;
+		}
 		default:
-			printf("Unrecognised type %u\n", t -> type);
+			val_throw(alloc_string("Unrecognised type"));
 			return alloc_null();
 	}
 }
