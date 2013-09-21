@@ -1248,12 +1248,18 @@
 		</new>
 		<haxe_doc>Describes a callable function's interface</haxe_doc>
 	</class>
-	<class path="ffi.Function" params="" file="./ffi/Function.hx" extern="1"><haxe_doc>A pointer to a native function</haxe_doc></class>
 	<class path="ffi.Pointer" params="" file="./ffi/Pointer.hx" extern="1">
-		<free public="1" set="method">
-			<f a=""><x path="Void"/></f>
-			<haxe_doc>Mark this pointer as garbage.</haxe_doc>
-		</free>
+		<getValue public="1" set="method">
+			<f a=""><d/></f>
+			<haxe_doc>Get this pointer as a neko value</haxe_doc>
+		</getValue>
+		<get public="1" set="method">
+			<f a="t">
+				<c path="ffi.Type"/>
+				<d/>
+			</f>
+			<haxe_doc>Get this pointer as a certain type</haxe_doc>
+		</get>
 		<fromString public="1" set="method">
 			<f a="s">
 				<c path="String"/>
@@ -1266,6 +1272,10 @@
 			<haxe_doc>Get the string stored at this pointer's location</haxe_doc>
 		</getString>
 		<haxe_doc>Represents a pointer</haxe_doc>
+	</class>
+	<class path="ffi.Function" params="" file="./ffi/Function.hx" extern="1">
+		<extends path="ffi.Pointer"/>
+		<haxe_doc>A pointer to a native function</haxe_doc>
 	</class>
 	<enum path="ffi.Status" params="" file="./ffi/Status.hx">
 		<OK><haxe_doc>The CIF worked on the function</haxe_doc></OK>
@@ -1459,9 +1469,9 @@
 		<load public="1" set="method" static="1">
 			<f a="path">
 				<c path="String"/>
-				<t path="Null"><c path="ffi.lib.Library"/></t>
+				<c path="ffi.lib.Library"/>
 			</f>
-			<haxe_doc>Loads the library matching the path or returns null if it could not be loaded</haxe_doc>
+			<haxe_doc>Loads the library at the path - in the case of an error it will throw the low-level error</haxe_doc>
 		</load>
 		<get public="1" set="method">
 			<f a="func">

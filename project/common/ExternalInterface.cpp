@@ -195,6 +195,14 @@ value from_pointer(void* ptr, ffi_type* t) {
 			return alloc_null();
 	}
 }
+value hx_ffi_get_val(value ptr) {
+	return (value) val_data(ptr);
+}
+DEFINE_PRIM(hx_ffi_get_val, 1);
+value hx_ffi_get_ptr(value ptr, value type) {
+	return from_pointer(val_get_handle(ptr, k_pointer), (ffi_type*) val_get_handle(type, k_ffi_type));
+}
+DEFINE_PRIM(hx_ffi_get_ptr, 2);
 value hx_ffi_cif_call(value v_cif, value v_func, value v_args) {
 	const ffi_cif* cif = (ffi_cif*) val_data(v_cif);
 	void (*func)(void) = (void (*)()) val_data(v_func);
@@ -219,23 +227,10 @@ value hx_ffi_load_library(value v_path) {
 	#ifdef UNIX
 	library = dlopen(path, RTLD_LAZY);
 	if(library == NULL)
-		library = dlopen(concat(path, ".so"), RTLD_LAZY);
-	if(library == NULL)
-		library = dlopen(concat(path, ".dynlib"), RTLD_LAZY);
-	if(library == NULL)
-		library = dlopen(concat(path, ".a"), RTLD_LAZY);
-	if(library == NULL) {
-		const char* path_wlib = concat("lib", path);
-		library = dlopen(concat(path_wlib, ".so"), RTLD_LAZY);
-		if(library == NULL)
-			library = dlopen(concat(path_wlib, ".dynlib"), RTLD_LAZY);
-		if(library == NULL)
-			library = dlopen(concat(path_wlib, ".a"), RTLD_LAZY);
-	}
+		val_throw(alloc_string(dlerror()));
 	#else
 	library = LoadLibrary(path);
-	if(library == NULL)
-		library = LoadLibrary(concat(path, ".dll"));
+	val_throw(alloc_int(GetLastError()));
 	#endif
 	return library == NULL ? alloc_null() : alloc_abstract(k_library, library);
 }
@@ -256,6 +251,8 @@ value hx_ffi_load_symbol(value v_lib, value v_sym) {
 	void* func;
 	#ifdef UNIX
 	func = dlsym(lib, sym);
+	if(func == NULL)
+		val_throw(alloc_string(dlerror()));
 	#else
 	#endif
 	return alloc_abstract(k_function, func);

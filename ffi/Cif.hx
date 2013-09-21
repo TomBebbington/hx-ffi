@@ -16,6 +16,26 @@ extern class Cif {
 	/** Returns a string representation of the function **/
 	public function toString():String;
 }
+#elseif java
+class Cif {
+	public var returnType(default, null):Type;
+	public var argTypes(default, null):Array<Type>;
+	public function new():Void {
+		this.returnType = null;
+		this.argTypes = null;
+	}
+	public function prep(args:Array<Type>, ret:Type):Status {
+		this.argTypes = args;
+		this.returnType = ret;
+		return Status.OK;
+	}
+	public function call(fn:Function, args:Array<Dynamic>):Dynamic {
+		var jnaFunc:com.sun.jna.Function = fn;
+		return jnaFunc.invoke(returnType, haxe.ds.Vector.fromArrayCopy(args).toData());
+	}
+	public function toString():String
+		return (argTypes.length == 0 ? "Void" : argTypes.map(Type.toString).join(" -> ")) + " -> " + returnType.toString();
+}
 #else
 import Type in HxType;
 /** Note: ABI is assumed to be JIT_ABI_DEFAULT **/

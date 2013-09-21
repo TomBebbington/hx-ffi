@@ -1,6 +1,20 @@
 -main samples.fastmath.FastMath
+-java samples/fastmath/java
+-java-lib jna.jar
+-lib ffi
+-dce full
+-cmd java -jar samples/fastmath/java/java.jar 30 2 6
+--next
+-main samples.fastmath.FastMath
 -neko samples/fastmath/run.n
 -cmd neko samples/fastmath/run.n 30 2 6
+-lib ffi
+-dce full
+--next
+-main samples.test.Test
+-neko samples/test/run.n
+-cmd neko samples/test/run.n
+-debug
 -lib ffi
 -dce full
 --next

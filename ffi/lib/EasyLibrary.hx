@@ -13,14 +13,36 @@ extern class EasyLibrary {
 	public function new(name:String):Void;
 }
 #else
+using sys.io.File;
+using sys.FileSystem;
+using Lambda;
 @:autoBuild(ffi.lib.EasyLibrary.Builder.build()) class EasyLibrary {
+	public static var EXTENSION:String = switch(Sys.systemName()) {
+		case "Windows": "dll";
+		case "Mac": "dynlib";
+		default: "so";
+	};
 	public var lib(default, null):Library;
 	public var name(default, null):String;
-	public function new(name:String) {
-		this.name = name;
-		this.lib = try Library.load(name) catch(e:Dynamic) null;
-		if(lib == null)
-			throw 'Could not load library "$name"';
+	public function new(nameOrPath:String) {
+		this.name = nameOrPath;
+		if(name.indexOf("/") != -1)
+			name = name.substr(name.lastIndexOf("/") + 1);
+		var path = switch(Sys.systemName()) {
+			case _ if(nameOrPath.exists() && nameOrPath.indexOf(".") != -1):
+				nameOrPath;
+			case _ if('$nameOrPath.$EXTENSION'.exists()):
+				'$nameOrPath.$EXTENSION';
+			case "Linux", "BSD" if(nameOrPath.indexOf("/") == -1 && nameOrPath.indexOf(".") == -1):
+				'lib$nameOrPath.so';
+			case "Windows":
+				'$nameOrPath.dll';
+			default: nameOrPath;
+		};
+		#if debug
+			Sys.println('Loading lib $nameOrPath from $path');
+		#end
+		this.lib = Library.load(path);
 	}
 	public inline function toString():String
 		return name;
@@ -30,10 +52,10 @@ extern class EasyLibrary {
 class Builder {
 	public var fields:Array<Field>;
 	public var inits:Array<Expr>;
-	public var structs:Map<String, String>;
+	public var structs:Array<String>;
 	public function new(fs:Array<Field>) {
 		this.fields = fs;
-		this.structs = new Map();
+		this.structs = [];
 		this.inits = [];
 	}
 	function parseStruct(e:Expr):Expr {
@@ -57,10 +79,61 @@ class Builder {
 		for(me in Context.getLocalClass().get().meta.get())
 			switch(me) {
 				case {name: ":struct", params: [{expr: EBinop(OpArrow, {expr:EConst(CIdent(structName))}, inner)}]}:
-					var structId = '_struct_${structName}';
-					nfs.push({pos: me.pos, name: structId, kind: FieldType.FVar(macro:ffi.Type)});
-					inits.push(macro $i{structId} = ${parseStruct(inner)});
-					structs.set(structName, structId);
+					structs.push(structName);
+					Context.defineType({
+						pack: Context.getLocalClass().get().pack,
+						name: structName,
+						kind: TypeDefKind.TDAbstract(macro:Array<Dynamic>, [], []),
+						pos: Context.currentPos(),
+						params: [],
+						meta: [],
+						isExtern: false,
+						fields: {
+							var fs = [];
+							var i = 0;
+							switch(inner.expr) {
+								case EBlock(es):
+									var fieldNames = [];
+									for(e in es)
+										switch(e.expr) {
+											case EVars(vars):
+												for(v in vars) {
+													fieldNames.push(v.name);
+													var asHaxe = toHaxeType(v.type);
+													fs.push({meta: null, access: [APublic], doc: null, name: v.name, pos: e.pos, kind: FieldType.FProp("get", "set", asHaxe)});
+													var conv = convertToHaxe(macro this[$v{i}], v.type);
+													fs.push({meta: null, access: [APrivate, AInline], doc: null, name: 'get_${v.name}', pos: e.pos, kind: FieldType.FFun({
+														ret: asHaxe,
+														params: [],
+														args: [],
+														expr: macro return $conv
+													})});
+													fs.push({meta: null, access: [APrivate, AInline], doc: null, name: 'set_${v.name}', pos: e.pos, kind: FieldType.FFun({
+														ret: asHaxe,
+														params: [],
+														args: [{name: "v", opt: false, type: asHaxe}],
+														expr: macro {
+															this[$v{i}] = v;
+															return $conv;
+														}
+													})});
+													i++;
+												}
+											default:
+										}
+									var fieldDesc = {expr: EArrayDecl([for(f in fieldNames) macro $v{f}+": "+$i{"get_"+f}()]), pos: inner.pos};
+									fs.push({meta: null, access: [APublic, AInline], doc: null, name: "toString", pos: inner.pos, kind: FieldType.FFun({
+										ret: macro:String,
+										params: [],
+										args: [],
+										expr: macro return $fieldDesc.join(", ")
+									})});
+									fs.push({meta: null, doc: null, pos: inner.pos, name: "TYPE", kind: FieldType.FVar(macro:ffi.Type, parseStruct(inner)), access: [APublic, AStatic]});
+								default:
+							}
+							fs;
+						}
+					});
 				default:
 			}
 		for(f in fields) {
@@ -93,12 +166,7 @@ class Builder {
 						ret: nfc.ret,
 						params: [],
 						args: nfc.args,
-						expr: switch(nfc.ret) {
-							case macro:Void: fexpr;
-							case macro:String: macro return Pointer.getString($fexpr);
-							case macro:Bool: macro $fexpr > 0;
-							default: macro return $fexpr;
-						}
+						expr: macro return ${convertToHaxe(fexpr, nfc.ret)}
 					});
 					nfs.push(f);
 				default:
@@ -118,6 +186,7 @@ class Builder {
 			super($v{libName});
 			$initBlock;
 		}})});
+		#if debug
 		trace(new haxe.macro.Printer().printTypeDefinition({
 			pos: Context.currentPos(),
 			params: [],
@@ -128,7 +197,16 @@ class Builder {
 			isExtern: false,
 			fields: nfs
 		}));
+		#end
 		return nfs;
+	}
+	public function convertToHaxe(v:Expr, t:ComplexType) {
+		return switch(t) {
+			case macro:Void: v;
+			case macro:String: macro return ffi.Pointer.getString($v);
+			case macro:Bool: macro return $v > 0;
+			default: v;
+		};
 	}
 	public function toHaxeType(c:ComplexType):ComplexType {
 		return switch(c) {
@@ -136,7 +214,7 @@ class Builder {
 			case TPath({pack: [], params: [], name: name}) if(name.indexOf("Int") != -1): macro:Int;
 			case macro:Float, macro:Single: macro:Float;
 			case TPath({pack: [], params: _, name: "Pointer"}): macro:ffi.Pointer;
-			case TPath({pack: [], params: [], name: name}) if(structs.exists(name)): macro:Dynamic;
+			case TPath({pack: [], params: [], name: name}) if(structs.has(name)): TPath({params: [], pack: [], name: name});
 			default: c;
 		};
 	}
@@ -144,12 +222,12 @@ class Builder {
 		return switch(c) {
 			case macro:String: macro ffi.Type.POINTER;
 			case macro:Float: macro ffi.Type.DOUBLE;
-			case macro:Single: macro ffi.Type.DOUBLE;
+			case macro:Single: macro ffi.Type.FLOAT;
 			case TPath({pack: [], params: _, name: "Pointer"}):
 				macro ffi.Type.POINTER;
 			case macro:Bool: macro ffi.Type.UINT8;
-			case TPath({pack: [], params: [], name: name}) if(structs.exists(name)):
-				macro $i{structs.get(name)};
+			case TPath({pack: [], params: [], name: name}) if(structs.has(name)):
+				macro $i{name}.TYPE;
 			case TPath({pack: [], params: [], name: name}):
 				var ename = name.toUpperCase();
 				if(StringTools.startsWith(ename, "INT"))

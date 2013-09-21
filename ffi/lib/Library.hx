@@ -1,12 +1,20 @@
 package ffi.lib;
 
-#if display
+#if(display||xml||macro)
 /** A runtime libary **/
 extern class Library {
-	/** Loads the library matching the path or returns null if it could not be loaded **/
-	public static function load(path:String):Null<Library>;
+	/** Loads the library at the path - in the case of an error it will throw the low-level error **/
+	public static function load(path:String):Library;
 	/** Loads a symbol from the library **/
 	public function get(func:String):ffi.Function;
+}
+#elseif java
+import com.sun.jna.NativeLibrary;
+abstract Library(NativeLibrary) from NativeLibrary to NativeLibrary {
+	public static inline function load(path:String):Library
+		return cast NativeLibrary.getInstance(path);
+	@:arrayAccess public inline function get(func:String):ffi.Function
+		return cast this.getFunction(func);
 }
 #else
 import sys.io.*;

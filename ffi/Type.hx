@@ -1,6 +1,6 @@
 package ffi;
 
-#if display
+#if(display||xml||macro)
 /** A native type **/
 extern class Type {
 	/** The type represented as an int **/
@@ -81,6 +81,24 @@ extern class Type {
 	public static function createStruct(elements:Array<Type>):Type;
 	/** Return a string representation of the type **/
 	public function toString():String;
+}
+#elseif java
+import com.sun.jna.*;
+import java.lang.Class in JClass;
+abstract Type(JClass<Dynamic>) to JClass<Dynamic> {
+	public static var VOID(default, never):Type = untyped __java__("Void.class");
+	public static var UINT8(default, never):Type = untyped __java__("Byte.class");
+	public static var SINT8(default, never):Type = untyped __java__("Byte.class");
+	public static var UINT16(default, never):Type = untyped __java__("Short.class");
+	public static var SINT16(default, never):Type = untyped __java__("Short.class");
+	public static var UINT32(default, never):Type = untyped __java__("Integer.class");
+	public static var SINT32(default, never):Type = untyped __java__("Integer.class");
+	public static var UINT64(default, never):Type = untyped __java__("Long.class");
+	public static var SINT64(default, never):Type = untyped __java__("Long.class");
+	public static var FLOAT(default, never):Type = untyped __java__("Float.class");
+	public static var DOUBLE(default, never):Type = untyped __java__("Double.class");
+	public inline function toString():String
+		return this.getName();
 }
 #else
 import Type in HxType;
