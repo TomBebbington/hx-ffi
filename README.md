@@ -46,10 +46,8 @@ class SDL {
 ```
 Supported Platforms
 -------------------
-* Neko / Linux (full)
 
-* Neko / Mac OS (*should* work, untested)
-
-* Neko / Windows (*should* work, untested)
-
-* Java (partial support using JNA, no structs yet)
++ Neko / Linux (full)
++ Neko / Mac OS (*should* work, untested)
++ Neko / Windows (*should* work, untested)
++ Java (partial support using JNA, no structs yet)
