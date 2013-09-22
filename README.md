@@ -31,18 +31,19 @@ Using Structs
 -------------
 Structs can be declared like this:
 
-    @:struct(SDLRect => {
-        var x:SInt16;
-        var y:SInt16;
-        var w:UInt16;
-        var h:UInt16;
-    })
-    @:lib("...")
-    class SDL {
-        ...
-        public function SDL_BlitSurface(...,dest: SDLRect...):Int;
-    }
-
+```haxe
+@:struct(SDLRect => {
+    var x:SInt16;
+    var y:SInt16;
+    var w:UInt16;
+    var h:UInt16;
+})
+@:lib("...")
+class SDL {
+    ...
+    public function SDL_BlitSurface(...,dest: SDLRect...):Int;
+}
+```
 Supported Platforms
 -------------------
 Neko / Linux (full)
