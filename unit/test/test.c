@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 int get_cool_int() {
 	return 1337;
 }
@@ -10,4 +11,19 @@ char* get_cool_str() {
 }
 void print_str(const char* str) {
 	printf("%s", str);
+}
+unsigned long long add(unsigned long long a, unsigned long long b) {
+	return a + b;
+}
+
+struct person {
+	char* name;
+	unsigned short age;
+};
+
+struct person* make_person(char* name, unsigned short age) {
+	struct person* p = malloc(sizeof(struct person));
+	p -> name = name;
+	p -> age = age;
+	return p;
 }

@@ -142,6 +142,12 @@ void* to_pointer(value val, ffi_type* t) {
 		PTR_TYPE(FFI_TYPE_UINT32, uint32_t, val_int)
 		PTR_TYPE(FFI_TYPE_SINT32, int32_t, val_int)
 		PTR_TYPE(FFI_TYPE_POINTER, uintptr_t, unwrap_pointer)
+		case FFI_TYPE_UINT64:
+		case FFI_TYPE_SINT64: {
+			const int64_t low = val_int(val_field(val, val_id("low")));
+			const int64_t high = val_int(val_field(val, val_id("high")));
+			return new int64_t(low | (high << 32));
+		}
 		case FFI_TYPE_STRUCT: {
 			const uint size = t -> size;
 			uintptr_t v = (uintptr_t) malloc(size);
@@ -159,6 +165,7 @@ void* to_pointer(value val, ffi_type* t) {
 			return (void*) v;
 		}
 		default:
+			val_throw(alloc_string("Unsupported type"));
 			return NULL;
 	}
 }

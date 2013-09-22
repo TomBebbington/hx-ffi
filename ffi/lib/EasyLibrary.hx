@@ -129,7 +129,8 @@ class Builder {
 											default:
 										}
 									var fieldDesc = {expr: EArrayDecl([for(f in fieldNames) macro $v{f}+": "+$i{"get_"+f}()]), pos: inner.pos};
-									fs.push({meta: null, access: [APublic, AInline], doc: null, name: "toString", pos: inner.pos, kind: FieldType.FFun({
+									
+									fs.push({meta: [{pos: inner.pos, params: [], name: ":to"}], access: [APublic, AInline], doc: null, name: "toString", pos: inner.pos, kind: FieldType.FFun({
 										ret: macro:String,
 										params: [],
 										args: [],
