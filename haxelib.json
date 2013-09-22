@@ -10,7 +10,7 @@
 		"binding"
 	],
 	"description": "Easy FFI for accessing native shared libraries",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"releasenote": "Alpha release",
 	"contributors": [
 		"TopHattedCoder"
