@@ -1,0 +1,3 @@
+#if java
+-java-lib jna.jar
+#end

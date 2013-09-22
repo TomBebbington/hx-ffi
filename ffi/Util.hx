@@ -1,19 +1,14 @@
 package ffi;
-#if (display||xml||java)
+#if (display||xml)
 /** Some random utilities used around the library - do not use from outside the library **/
 extern class Util {
-
 }
 #elseif js
 @:allow(ffi)
 class Util {
 	public static var ffi(default, never):Dynamic = untyped __js__("require('ffi')");
 }
-#elseif java
-class Util {
-
-}
-#else
+#elseif (neko || cpp)
 @:allow(ffi)
 class Util {
 	static inline function toHaxe(v:Dynamic):Dynamic

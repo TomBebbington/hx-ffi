@@ -2,7 +2,7 @@ package ffi;
 
 #if display
 /** Describes a callable function's interface **/
-extern class Cif {
+extern class CallInterface {
 	/** The type it returns **/
 	public var returnType(default, never):Type;
 	/** The arguments it accepts **/
@@ -17,7 +17,7 @@ extern class Cif {
 	public function toString():String;
 }
 #elseif java
-class Cif {
+class CallInterface {
 	public var returnType(default, null):Type;
 	public var argTypes(default, null):Array<Type>;
 	public function new():Void {
@@ -31,15 +31,15 @@ class Cif {
 	}
 	public function call(fn:Function, args:Array<Dynamic>):Dynamic {
 		var jnaFunc:com.sun.jna.Function = fn;
-		return jnaFunc.invoke(returnType, haxe.ds.Vector.fromArrayCopy(args).toData());
+		return jnaFunc.invoke(returnType.jtype, haxe.ds.Vector.fromArrayCopy(args).toData());
 	}
 	public function toString():String
-		return (argTypes.length == 0 ? "Void" : argTypes.map(Type.toString).join(" -> ")) + " -> " + returnType.toString();
+		return (argTypes.length == 0 ? "Void" : [for(a in argTypes) a.toString()].join(" -> ")) + " -> " + returnType.toString();
 }
 #else
 import Type in HxType;
 /** Note: ABI is assumed to be JIT_ABI_DEFAULT **/
-abstract Cif(Dynamic) {
+abstract CallInterface(Dynamic) {
 	public var returnType(get, never):Type;
 	public var argTypes(get, never):Array<Type>;
 	inline function get_returnType():Type

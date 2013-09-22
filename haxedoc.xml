@@ -1213,7 +1213,7 @@
 	This class complements the more lightweight Reflect class, with a focus on
 	class and enum instances.</haxe_doc>
 	</class>
-	<class path="ffi.Cif" params="" file="./ffi/Cif.hx" extern="1">
+	<class path="ffi.CallInterface" params="" file="./ffi/CallInterface.hx" extern="1">
 		<toString public="1" set="method">
 			<f a=""><c path="String"/></f>
 			<haxe_doc>Returns a string representation of the function</haxe_doc>
@@ -1461,7 +1461,7 @@
 				<c path="String"/>
 				<x path="Void"/>
 			</f>
-			<haxe_doc>Loads the library with the name/path or throws an error</haxe_doc>
+			<haxe_doc>Loads the library with the given name/path or throws an error</haxe_doc>
 		</new>
 		<haxe_doc>An easily extendible and portable quick way for defining a library in Haxe</haxe_doc>
 	</class>

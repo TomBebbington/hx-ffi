@@ -23,6 +23,18 @@ abstract Pointer(JPointer) from JPointer to JPointer {
 		m.setString(haxe.Int64.ofInt(0), s, false);
 		return cast m;
 	}
+	public inline function get(t:ffi.Type):Dynamic {
+		return switch(t.toString()) {
+			case "java.lang.Byte": this.getByte(haxe.Int64.ofInt(0));
+			case "java.lang.Char": this.getChar(haxe.Int64.ofInt(0));
+			case "java.lang.Double": this.getDouble(haxe.Int64.ofInt(0));
+			case "java.lang.Float": this.getFloat(haxe.Int64.ofInt(0));
+			case "java.lang.Integer": this.getInt(haxe.Int64.ofInt(0));
+			case "java.lang.Long": this.getLong(haxe.Int64.ofInt(0));
+			case "com.sun.jna.Pointer", "com.sun.jna.Memory": this.getPointer(haxe.Int64.ofInt(0));
+			default: throw 'Unrecognised type: $t';
+		}
+	}
 }
 #else
 abstract Pointer(Dynamic) {

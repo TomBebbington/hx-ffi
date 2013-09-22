@@ -25,3 +25,8 @@ struct point make_point(float x, float y) {
 float point_length(struct point p) {
 	return fast_sqrt(p.x * p.x + p.y * p.y);
 }
+float* fast_sqrt_ptr(float number) {
+	float* sp = malloc(sizeof(float));
+	*sp = fast_sqrt(number);
+	return sp;
+}

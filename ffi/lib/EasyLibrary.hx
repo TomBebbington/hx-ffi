@@ -9,14 +9,15 @@ extern class EasyLibrary {
 	public var lib(default, null):Library;
 	/** The name of the library **/
 	public var name(default, null):String;
-	/** Loads the library with the name/path or throws an error **/
+	/** Loads the library with the given name/path or throws an error **/
 	public function new(name:String):Void;
 }
 #else
 using sys.io.File;
 using sys.FileSystem;
 using Lambda;
-@:autoBuild(ffi.lib.EasyLibrary.Builder.build()) class EasyLibrary {
+import ffi.lib.EasyLibrary;
+@:autoBuild(ffi.lib.EasyLibrary.build()) class EasyLibrary {
 	public static var EXTENSION:String = switch(Sys.systemName()) {
 		case "Windows": "dll";
 		case "Mac": "dynlib";
@@ -46,6 +47,10 @@ using Lambda;
 	}
 	public inline function toString():String
 		return name;
+	#if macro
+	macro static function build():Array<Field>
+		return Builder.build();
+	#end
 }
 #end
 #if macro
@@ -157,8 +162,8 @@ class Builder {
 					nfs.push(of);
 					var cif = Reflect.copy(ef);
 					cif.name = '_cif_${f.name}';
-					cif.kind = FieldType.FVar(macro:ffi.Cif);
-					inits.push(macro $i{cif.name} = new ffi.Cif());
+					cif.kind = FieldType.FVar(macro:ffi.CallInterface);
+					inits.push(macro $i{cif.name} = new ffi.CallInterface());
 					nfs.push(cif);
 					inits.push(macro $i{cif.name}.prep(${{expr: EArrayDecl([for(a in ofc.args) toFFIType(a.type)]), pos: Context.currentPos()}}, ${toFFIType(f.kind.getParameters()[0].ret)}));
 					var fexpr = macro try $i{cif.name}.call($i{of.name}, ${{pos: cif.pos, expr: EArrayDecl([for(a in nfc.args) macro $i{a.name}])}}) catch(e:Dynamic) throw e+" in "+$v{f.name};

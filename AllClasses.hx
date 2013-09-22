@@ -1,6 +1,6 @@
 import ffi.lib.EasyLibrary;
 import ffi.lib.Library;
-import ffi.Cif;
+import ffi.CallInterface;
 import ffi.Function;
 import ffi.Pointer;
 import ffi.Status;
