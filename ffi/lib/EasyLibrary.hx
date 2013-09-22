@@ -173,7 +173,10 @@ class Builder {
 						ret: nfc.ret,
 						params: [],
 						args: nfc.args,
-						expr: macro return ${convertToHaxe(fexpr, nfc.ret)}
+						expr: switch(nfc.ret) {
+							case macro:Void: fexpr;
+							default: macro return ${convertToHaxe(fexpr, nfc.ret)}
+						}
 					});
 					nfs.push(f);
 				default:
@@ -210,7 +213,10 @@ class Builder {
 	public function convertToHaxe(v:Expr, t:ComplexType) {
 		return switch(t) {
 			case macro:Void: v;
-			case macro:String: macro return ffi.Pointer.getString($v);
+			case macro:String: macro {
+				var p:ffi.Pointer = $v;
+				return p.getString();
+			};
 			case macro:Bool: macro return $v > 0;
 			default: v;
 		};

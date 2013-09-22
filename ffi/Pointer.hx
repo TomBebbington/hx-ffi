@@ -16,23 +16,21 @@ extern class Pointer {
 import com.sun.jna.Pointer in JPointer;
 import com.sun.jna.Memory;
 abstract Pointer(JPointer) from JPointer to JPointer {
-	public inline function getString():String
+	@:to public inline function getString():String
 		return this.getString(haxe.Int64.ofInt(0));
-	public inline function fromString(s:String):Pointer {
+	@:from public static function fromString(s:String):Pointer {
 		var m = new Memory(haxe.Int64.ofInt(s.length + 1));
 		m.setString(haxe.Int64.ofInt(0), s, false);
 		return cast m;
 	}
-	public inline function get(t:ffi.Type):Dynamic {
-		return switch(t.toString()) {
-			case "java.lang.Byte": this.getByte(haxe.Int64.ofInt(0));
-			case "java.lang.Char": this.getChar(haxe.Int64.ofInt(0));
-			case "java.lang.Double": this.getDouble(haxe.Int64.ofInt(0));
-			case "java.lang.Float": this.getFloat(haxe.Int64.ofInt(0));
-			case "java.lang.Integer": this.getInt(haxe.Int64.ofInt(0));
-			case "java.lang.Long": this.getLong(haxe.Int64.ofInt(0));
-			case "com.sun.jna.Pointer", "com.sun.jna.Memory": this.getPointer(haxe.Int64.ofInt(0));
-			default: throw 'Unrecognised type: $t';
+	public function get(t:ffi.Type):Dynamic {
+		return switch(t.type) {
+			case Type.TYPE_UINT8, Type.TYPE_SINT8: this.getByte(haxe.Int64.ofInt(0));
+			case Type.TYPE_DOUBLE: this.getDouble(haxe.Int64.ofInt(0));
+			case Type.TYPE_FLOAT: this.getFloat(haxe.Int64.ofInt(0));
+			case Type.TYPE_UINT64, Type.TYPE_SINT64: this.getLong(haxe.Int64.ofInt(0));
+			case Type.TYPE_POINTER: this.getPointer(haxe.Int64.ofInt(0));
+			default: this.getInt(haxe.Int64.ofInt(0));
 		}
 	}
 }

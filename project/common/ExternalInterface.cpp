@@ -17,6 +17,8 @@ DEFINE_KIND(k_ffi_cif);
 DEFINE_KIND(k_function);
 DEFINE_KIND(k_library);
 DEFINE_KIND(k_pointer);
+#define wrap_pointer(ptr)			(ptr == 0 ? alloc_null() : alloc_abstract(k_pointer, (void*) ptr))
+#define unwrap_pointer(ptr)			(val_is_string(ptr) ? (uintptr_t) val_string(ptr) : (val_is_null(ptr) ? NULL : ((uintptr_t) val_data(ptr))))
 #define TYPE(n) \
 value hx_ffi_type_##n() { \
 	return alloc_abstract(k_ffi_type, &ffi_type_##n); \
@@ -139,7 +141,7 @@ void* to_pointer(value val, ffi_type* t) {
 		PTR_TYPE(FFI_TYPE_SINT16, int16_t, val_int)
 		PTR_TYPE(FFI_TYPE_UINT32, uint32_t, val_int)
 		PTR_TYPE(FFI_TYPE_SINT32, int32_t, val_int)
-		PTR_TYPE(FFI_TYPE_POINTER, void*, val_data)
+		PTR_TYPE(FFI_TYPE_POINTER, uintptr_t, unwrap_pointer)
 		case FFI_TYPE_STRUCT: {
 			const uint size = t -> size;
 			uintptr_t v = (uintptr_t) malloc(size);
@@ -175,8 +177,7 @@ value from_pointer(void* ptr, ffi_type* t) {
 		FROM_TYPE(FFI_TYPE_SINT16, int16_t, alloc_int)
 		FROM_TYPE(FFI_TYPE_UINT32, uint32_t, alloc_int)
 		FROM_TYPE(FFI_TYPE_SINT32, int32_t, alloc_int)
-		case FFI_TYPE_POINTER:
-			return alloc_abstract(k_pointer, ptr);
+		FROM_TYPE(FFI_TYPE_POINTER, uintptr_t, wrap_pointer)
 		case FFI_TYPE_STRUCT: {
 			uint size = 0;
 			while(t -> elements[size] != NULL)
@@ -208,7 +209,7 @@ value hx_ffi_get_val(value ptr) {
 }
 DEFINE_PRIM(hx_ffi_get_val, 1);
 value hx_ffi_get_ptr(value ptr, value type) {
-	return from_pointer(val_get_handle(ptr, k_pointer), (ffi_type*) val_get_handle(type, k_ffi_type));
+	return from_pointer((void*) unwrap_pointer(ptr), (ffi_type*) val_get_handle(type, k_ffi_type));
 }
 DEFINE_PRIM(hx_ffi_get_ptr, 2);
 value hx_ffi_cif_call(value v_cif, value v_func, value v_args) {
@@ -273,7 +274,7 @@ const value hx_ffi_get_str(const value ptr) {
 DEFINE_PRIM(hx_ffi_get_str, 1);
 
 const value hx_ffi_from_str(const value str) {
-	return alloc_abstract(k_pointer, (char*) val_string(str));
+	return wrap_pointer((const char*) val_string(str));
 }
 DEFINE_PRIM(hx_ffi_from_str, 1);
 
