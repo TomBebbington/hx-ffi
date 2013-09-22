@@ -1474,9 +1474,9 @@
 			<haxe_doc>Loads the library at the path - in the case of an error it will throw the low-level error</haxe_doc>
 		</load>
 		<get public="1" set="method">
-			<f a="func">
+			<f a="name">
 				<c path="String"/>
-				<c path="ffi.Function"/>
+				<c path="ffi.Pointer"/>
 			</f>
 			<haxe_doc>Loads a symbol from the library</haxe_doc>
 		</get>
