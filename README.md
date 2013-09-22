@@ -48,6 +48,6 @@ Supported Platforms
 -------------------
 
 + Neko / Linux (full)
-+ Neko / Mac OS (*should* work, untested)
-+ Neko / Windows (*should* work, untested)
++ Neko / Mac OS (_should_ work, untested)
++ Neko / Windows (_should_ work, untested)
 + Java (partial support using JNA, no structs yet)
