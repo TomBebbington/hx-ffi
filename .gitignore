@@ -3,3 +3,4 @@ obj/
 java/
 all_objs
 *.n
+*.so
