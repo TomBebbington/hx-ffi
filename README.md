@@ -25,4 +25,11 @@ __struct__					| Struct&lt;ordered types...&gt;| Array&lt;Dynamic&gt;	| ffi.Type
 
 Usage
 -----
-You can use FFI easily and transparently by extending `ffi.lib.EasyLibrary` like this:
+You can use FFI easily and transparently by extending `ffi.lib.EasyLibrary` as seen in the samples.
+
+Supported Platforms
+-------------------
+Neko / Linux (full)
+Neko / Mac OS (*should* work, untested)
+Neko / Windows (*should* work, untested)
+Java (partial support using JNA, no structs yet)
