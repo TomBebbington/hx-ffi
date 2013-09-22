@@ -14,6 +14,7 @@ class TestTests extends TestCase {
 	}
 	public function testPerson() {
 		var person:Person = t.make_person("Tom", 234).get(Person.TYPE);
+		assertEquals("name: Bobaffet, age: 23", new Person("Bobaffet", 23));
 		assertEquals("name: Tom, age: 234", person.toString());
 	}
 }

@@ -87,7 +87,7 @@ class Builder {
 			switch(me) {
 				case {name: ":struct", params: [{expr: EBinop(OpArrow, {expr:EConst(CIdent(structName))}, inner)}]}:
 					structs.push(structName);
-					Context.defineType({
+					var td:TypeDefinition = {
 						pack: Context.getLocalClass().get().pack,
 						name: structName,
 						kind: TypeDefKind.TDAbstract(macro:Array<Dynamic>, [], []),
@@ -100,20 +100,19 @@ class Builder {
 							var i = 0;
 							switch(inner.expr) {
 								case EBlock(es):
-									var fieldNames = [];
+									var fields = [];
 									for(e in es)
 										switch(e.expr) {
 											case EVars(vars):
 												for(v in vars) {
-													fieldNames.push(v.name);
+													fields.push({name: v.name, type: v.type});
 													var asHaxe = toHaxeType(v.type);
 													fs.push({meta: null, access: [APublic], doc: null, name: v.name, pos: e.pos, kind: FieldType.FProp("get", "set", asHaxe)});
-													var conv = convertToHaxe(macro this[$v{i}], v.type);
 													fs.push({meta: null, access: [APrivate, AInline], doc: null, name: 'get_${v.name}', pos: e.pos, kind: FieldType.FFun({
 														ret: asHaxe,
 														params: [],
 														args: [],
-														expr: macro return $conv
+														expr: macro return ${convertToHaxe(macro this[$v{i}], v.type)}
 													})});
 													fs.push({meta: null, access: [APrivate, AInline], doc: null, name: 'set_${v.name}', pos: e.pos, kind: FieldType.FFun({
 														ret: asHaxe,
@@ -121,14 +120,14 @@ class Builder {
 														args: [{name: "v", opt: false, type: asHaxe}],
 														expr: macro {
 															this[$v{i}] = v;
-															return $conv;
+															return v;
 														}
 													})});
 													i++;
 												}
 											default:
 										}
-									var fieldDesc = {expr: EArrayDecl([for(f in fieldNames) macro $v{f}+": "+$i{"get_"+f}()]), pos: inner.pos};
+									var fieldDesc = {expr: EArrayDecl([for(f in fields) macro $v{f.name}+": "+$i{"get_"+f.name}()]), pos: inner.pos};
 									
 									fs.push({meta: [{pos: inner.pos, params: [], name: ":to"}], access: [APublic, AInline], doc: null, name: "toString", pos: inner.pos, kind: FieldType.FFun({
 										ret: macro:String,
@@ -137,11 +136,22 @@ class Builder {
 										expr: macro return $fieldDesc.join(", ")
 									})});
 									fs.push({meta: null, doc: null, pos: inner.pos, name: "TYPE", kind: FieldType.FVar(macro:ffi.Type, parseStruct(inner)), access: [APublic, AStatic]});
+									var initExpr:Expr = {expr: EArrayDecl([for(f in fields) convertFromHaxe({expr:EConst(CIdent(f.name)), pos: inner.pos}, f.type)]), pos: inner.pos};
+									fs.push({meta: null, access: [APublic, AInline], doc: null, name: "new", pos: inner.pos, kind: FieldType.FFun({
+										ret: macro:Void,
+										params: [],
+										args: [for(f in fields) {name: f.name, opt: true, type: toHaxeType(f.type)}],
+										expr: macro this = $initExpr
+									})});
 								default:
 							}
 							fs;
 						}
-					});
+					};
+					Context.defineType(td);
+					#if debug
+					Sys.println(new haxe.macro.Printer().printTypeDefinition(td));
+					#end
 				default:
 			}
 		for(f in fields) {
@@ -218,7 +228,15 @@ class Builder {
 				var p:ffi.Pointer = $v;
 				return p.getString();
 			};
-			case macro:Bool: macro return $v > 0;
+			case macro:Bool: macro $v > 0;
+			default: v;
+		};
+	}
+	public function convertFromHaxe(v:Expr, t:ComplexType) {
+		return switch(t) {
+			case macro:Void: v;
+			case macro:String: macro ffi.Pointer.fromString($v);
+			case macro:Bool: macro $v ? 1 : 0;
 			default: v;
 		};
 	}
