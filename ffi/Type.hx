@@ -199,7 +199,7 @@ abstract Type(Dynamic) {
 	public static inline var TYPE_POINTER:Int = 14;
 	public static inline function createStruct(elements:Array<Type>):Type
 		return ffi_make_struct_type(elements);
-	@:to public function toString():String {
+	@:to @:keep public function toString():String {
 		var t = get_type();
 		var es = get_elements();
 		return switch(t) {

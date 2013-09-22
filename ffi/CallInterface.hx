@@ -52,8 +52,14 @@ abstract CallInterface(Dynamic) {
 		return HxType.createEnumIndex(Status, ffi_cif_prep(this, args, ret));
 	public inline function toString():String
 		return (argTypes.length == 0 ? "Void" : argTypes.map(Type.toString).join(" -> ")) + " -> " + returnType.toString();
-	public inline function call(fn:Function, args:Array<Dynamic>):Dynamic
-		return ffi_cif_call(this, fn, args);
+	public inline function call(fn:Function, args:Array<Dynamic>):Dynamic {
+		var r:Dynamic = ffi_cif_call(this, fn, args);
+		return switch(returnType.type) {
+			case ffi.Type.TYPE_SINT64, ffi.Type.TYPE_UINT64:
+				haxe.Int64.make(r.high, r.low);
+			default: r;
+		}
+	}
 	static var ffi_cif_get_arg_types:Dynamic = ffi.Util.load("cif_get_arg_types", 1);
 	static var ffi_cif_create:Dynamic = ffi.Util.load("cif_create", 0);
 	static var ffi_cif_call:Dynamic = ffi.Util.load("cif_call", 3);

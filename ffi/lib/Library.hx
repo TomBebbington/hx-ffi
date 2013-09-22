@@ -6,15 +6,15 @@ extern class Library {
 	/** Loads the library at the path - in the case of an error it will throw the low-level error **/
 	public static function load(path:String):Library;
 	/** Loads a symbol from the library **/
-	public function get(func:String):ffi.Function;
+	public function get(name:String):ffi.Pointer;
 }
 #elseif java
 import com.sun.jna.NativeLibrary;
 abstract Library(NativeLibrary) from NativeLibrary to NativeLibrary {
 	public static inline function load(path:String):Library
 		return cast NativeLibrary.getInstance(path);
-	@:arrayAccess public inline function get(func:String):ffi.Function
-		return cast this.getFunction(func);
+	@:arrayAccess public inline function get(name:String):ffi.Pointer
+		return cast this.getFunction(name);
 }
 #else
 import sys.io.*;

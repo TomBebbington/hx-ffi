@@ -1,0 +1,8 @@
+-main Unit
+-x run
+-lib ffi
+--next
+-main Unit
+-java java
+-lib ffi
+-cmd java -jar java/java.jar

@@ -13,8 +13,10 @@ extern class EasyLibrary {
 	public function new(name:String):Void;
 }
 #else
+#if sys
 using sys.io.File;
 using sys.FileSystem;
+#end
 using Lambda;
 import ffi.lib.EasyLibrary;
 @:autoBuild(ffi.lib.EasyLibrary.build()) class EasyLibrary {
@@ -39,7 +41,7 @@ import ffi.lib.EasyLibrary;
 			case "Windows":
 				'$nameOrPath.dll';
 			default: nameOrPath;
-		};
+		}
 		#if debug
 			Sys.println('Loading lib $nameOrPath from $path');
 		#end

@@ -190,6 +190,14 @@ value from_pointer(void* ptr, ffi_type* t) {
 			}
 			return obj;
 		}
+		case FFI_TYPE_SINT64:
+		case FFI_TYPE_UINT64: {
+			const value v = alloc_empty_object();
+			const int64_t l = *((int64_t*) ptr);
+			alloc_field(v, val_id("low"), alloc_int(l & 0xFFFFFFFF));
+			alloc_field(v, val_id("high"), alloc_int(l >> 32));
+			return v;
+		}
 		default:
 			val_throw(alloc_string("Unrecognised type"));
 			return alloc_null();

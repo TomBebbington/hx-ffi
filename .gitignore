@@ -4,3 +4,4 @@ java/
 all_objs
 *.n
 *.so
+unit/run.n
