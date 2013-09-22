@@ -30,6 +30,7 @@ You can use FFI easily and transparently by extending `ffi.lib.EasyLibrary` as s
 Using Structs
 -------------
 Structs can be declared like this:
+
     @:struct(SDLRect => {
         var x:SInt16;
         var y:SInt16;
