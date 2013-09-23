@@ -6,5 +6,6 @@ all_objs
 *.so
 unit/run.n
 node_modules/
+npm-debug.log
 *.map
 *.js
