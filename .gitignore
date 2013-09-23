@@ -5,3 +5,6 @@ all_objs
 *.n
 *.so
 unit/run.n
+node_modules/
+*.map
+*.js

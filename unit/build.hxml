@@ -1,4 +1,10 @@
 -main Unit
+-js run.js
+-lib ffi
+-lib nodejs
+-cmd node run.js
+--next
+-main Unit
 -x run
 -lib ffi
 --next

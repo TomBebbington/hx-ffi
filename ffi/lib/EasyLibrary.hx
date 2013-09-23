@@ -20,18 +20,37 @@ using sys.FileSystem;
 using Lambda;
 import ffi.lib.EasyLibrary;
 @:autoBuild(ffi.lib.EasyLibrary.build()) class EasyLibrary {
-	public static var EXTENSION:String = switch(Sys.systemName()) {
+	public static var EXTENSION:String = #if sys switch(Sys.systemName()) {
 		case "Windows": "dll";
 		case "Mac": "dynlib";
 		default: "so";
-	};
+	} #elseif nodejs
+		switch(untyped process.platform) {
+			case "darwin", "mac": "dylib";
+			case "win32": "dll";
+			default: "so";
+		}
+	#end;
 	public var lib(default, null):Library;
 	public var name(default, null):String;
 	public function new(nameOrPath:String) {
 		this.name = nameOrPath;
 		if(name.indexOf("/") != -1)
 			name = name.substr(name.lastIndexOf("/") + 1);
-		var path = switch(Sys.systemName()) {
+		var path = #if(nodejs && js && !macro)
+			switch(untyped process.platform) {
+				case _ if(js.Node.fs.existsSync(nameOrPath) && nameOrPath.indexOf(".") != -1):
+					nameOrPath;
+				case _ if(js.Node.fs.existsSync('$nameOrPath.$EXTENSION')):
+					'$nameOrPath.$EXTENSION';
+				case "win32":
+					'$nameOrPath.dll';
+				case "mac", "darwin":
+					'$nameOrPath.dynlib';
+				default:
+					'lib$nameOrPath.so';
+			}
+		#elseif sys switch(Sys.systemName()) {
 			case _ if(nameOrPath.exists() && nameOrPath.indexOf(".") != -1):
 				nameOrPath;
 			case _ if('$nameOrPath.$EXTENSION'.exists()):
@@ -41,8 +60,8 @@ import ffi.lib.EasyLibrary;
 			case "Windows":
 				'$nameOrPath.dll';
 			default: nameOrPath;
-		}
-		#if debug
+		} #end;
+		#if(debug&&!nodejs)
 			Sys.println('Loading lib $nameOrPath from $path');
 		#end
 		this.lib = Library.load(path);
@@ -179,7 +198,8 @@ class Builder {
 					inits.push(macro $i{cif.name} = new ffi.CallInterface());
 					nfs.push(cif);
 					inits.push(macro $i{cif.name}.prep(${{expr: EArrayDecl([for(a in ofc.args) toFFIType(a.type)]), pos: Context.currentPos()}}, ${toFFIType(f.kind.getParameters()[0].ret)}));
-					var fexpr = macro try $i{cif.name}.call($i{of.name}, ${{pos: cif.pos, expr: EArrayDecl([for(a in nfc.args) macro $i{a.name}])}}) catch(e:Dynamic) throw e+" in "+$v{f.name};
+					var fexpr = macro $i{cif.name}.call($i{of.name}, ${{pos: cif.pos, expr: EArrayDecl([for(a in nfc.args) ${convertFromHaxe(macro $i{a.name}, a.type)}])}});
+					#if !debug fexpr = macro try $fexpr catch(e:Dynamic) throw e+" in "+$v{f.name}; #end
 					f.kind = FieldType.FFun({
 						ret: nfc.ret,
 						params: [],

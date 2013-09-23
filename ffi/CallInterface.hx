@@ -16,6 +16,30 @@ extern class CallInterface {
 	/** Returns a string representation of the function **/
 	public function toString():String;
 }
+#elseif(nodejs && js)
+class CallInterface {
+	public var returnType(default, null):Type;
+	public var argTypes(default, null):Array<Type>;
+	public function new():Void {
+		this.returnType = null;
+		this.argTypes = null;
+	}
+	public function prep(args:Array<Type>, ret:Type):Status {
+		this.argTypes = args;
+		this.returnType = ret;
+		return Status.OK;
+	}
+	public function call(fn:Function, args:Array<Dynamic>):Dynamic {
+  		var func = Util.ffi.ForeignFunction(fn, returnType, argTypes);
+		var r:Dynamic = Reflect.callMethod(null, func, args);
+		return if(returnType.elements != null)
+			[for(f in Reflect.fields(r))
+				Reflect.field(r, f)];
+		else r;
+	}
+	public function toString():String
+		return (argTypes.length == 0 ? "Void" : [for(a in argTypes) a.toString()].join(" -> ")) + " -> " + returnType.toString();
+}
 #elseif java
 class CallInterface {
 	public var returnType(default, null):Type;
@@ -50,7 +74,7 @@ abstract CallInterface(Dynamic) {
 		this = ffi_cif_create();
 	public inline function prep(args:Array<Type>, ret:Type):Status
 		return HxType.createEnumIndex(Status, ffi_cif_prep(this, args, ret));
-	public inline function toString():String
+	public function toString():String
 		return (argTypes.length == 0 ? "Void" : argTypes.map(Type.toString).join(" -> ")) + " -> " + returnType.toString();
 	public inline function call(fn:Function, args:Array<Dynamic>):Dynamic {
 		var r:Dynamic = ffi_cif_call(this, fn, args);

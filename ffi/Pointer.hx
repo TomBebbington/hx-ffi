@@ -9,8 +9,22 @@ extern class Pointer {
 	function fromString(s:String):Pointer;
 	/** Get this pointer as a certain type **/
 	function get(t:ffi.Type):Dynamic;
-	/** Get this pointer as a neko value **/
-	function getValue():Dynamic;
+	/** Get this pointer to a neko value as a neko value **/
+	function getAsNekoValue():Dynamic;
+	/** Allocate enough space for the given type **/
+	public static function alloc(t:ffi.Type):Pointer;
+}
+#elseif(nodejs && js)
+/** Buffer **/
+abstract Pointer(Dynamic) {
+	@:to public inline function getString():String
+		return this.readCString();
+	public inline function get(t:ffi.Type):Dynamic
+		return untyped t.get(Util.ref.reinterpret(this, t.size, 0));
+	@:from public static inline function fromString(s:String):Pointer
+		return Util.ref.allocCString(s);
+	public static inline function alloc(t:ffi.Type):Pointer
+		return Util.ref.alloc(t);
 }
 #elseif java
 import com.sun.jna.Pointer in JPointer;
@@ -36,16 +50,13 @@ abstract Pointer(JPointer) from JPointer to JPointer {
 }
 #else
 abstract Pointer(Dynamic) {
-	public inline function new(v:Dynamic)
-		this = v;
-	@:to public inline function getString() {
+	@:to public inline function getString():String
 		return ffi_get_str(this);
-	}
 	@:from public static inline function fromString(s:String):Pointer
 		return ffi_from_str(s);
 	public inline function get(t:ffi.Type):Dynamic
 		return ffi_get_ptr(this, t);
-	public inline function getValue():Dynamic
+	public inline function getAsNekoValue():Dynamic
 		return ffi_get_val(this);
 	public inline function free():Void
 		ffi_free(this);

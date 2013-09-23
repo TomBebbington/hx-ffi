@@ -3,10 +3,14 @@ package ffi;
 /** Some random utilities used around the library - do not use from outside the library **/
 extern class Util {
 }
-#elseif js
+#elseif(nodejs && js)
+import js.Node.*;
 @:allow(ffi)
 class Util {
-	public static var ffi(default, never):Dynamic = untyped __js__("require('ffi')");
+	public static var ffi(default, never):Dynamic = require('ffi');
+	public static var ref(default, never):Dynamic = require('ref');
+	public static var struct(default, never):Dynamic = require('ref-struct');
+	public static var path(default, never):Dynamic = require('path');
 }
 #elseif (neko || cpp)
 @:allow(ffi)
@@ -32,4 +36,6 @@ class Util {
 	}
 	#end
 }
+#else
+#error "Unsupported"
 #end

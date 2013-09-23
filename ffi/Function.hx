@@ -14,6 +14,6 @@ abstract Function(JFunction) from JFunction to JFunction {
 }
 #else
 abstract Function(Dynamic) to Pointer from Pointer {
-
+	
 }
 #end

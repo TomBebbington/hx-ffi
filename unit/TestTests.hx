@@ -13,7 +13,8 @@ class TestTests extends TestCase {
 		t.print_str("Hello, world!\n");
 	}
 	public function testPerson() {
-		var person:Person = t.make_person("Tom", 234).get(Person.TYPE);
+		var personPtr:ffi.Pointer = t.make_person("Tom", 234);
+		var person:Person = personPtr.get(Person.TYPE);
 		assertEquals("name: Bobaffet, age: 23", new Person("Bobaffet", 23));
 		assertEquals("name: Tom, age: 234", person.toString());
 	}
