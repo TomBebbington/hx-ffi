@@ -18,10 +18,10 @@ unsigned long long add(unsigned long long a, unsigned long long b) {
 
 struct person {
 	char* name;
-	unsigned short age;
+	unsigned char age;
 };
 
-struct person* make_person(char* name, unsigned short age) {
+struct person* make_person(char* name, unsigned char age) {
 	struct person* p = malloc(sizeof(struct person));
 	p -> name = name;
 	p -> age = age;

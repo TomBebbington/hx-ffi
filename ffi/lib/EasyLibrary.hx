@@ -2,6 +2,7 @@ package ffi.lib;
 import haxe.macro.Type;
 import haxe.macro.Expr;
 import haxe.macro.*;
+using haxe.macro.ComplexTypeTools;
 #if display
 /** An easily extendible and portable quick way for defining a library in Haxe **/
 extern class EasyLibrary {
@@ -79,10 +80,12 @@ class Builder {
 	public var fields:Array<Field>;
 	public var inits:Array<Expr>;
 	public var structs:Array<String>;
+	public var cifs:Map<String, String>; // type.toString -> cif name
 	public function new(fs:Array<Field>) {
 		this.fields = fs;
 		this.structs = [];
 		this.inits = [];
+		this.cifs = new Map<String, String>();
 	}
 	function parseStruct(e:Expr):Expr {
 		return switch(e.expr) {
@@ -99,6 +102,9 @@ class Builder {
 				return macro ffi.Type.createStruct(${{expr: EArrayDecl(elements), pos: e.pos}});
 			default: throw "Bad struct";
 		};
+	}
+	static function funcToType(f:Function):String {
+		return (f.args.length == 0 ? "Void -> ": [for(a in f.args) a.type.toString() + " -> "].join(""))+f.ret.toString();
 	}
 	public function run():Array<Field> {
 		var nfs:Array<Field> = [];
@@ -178,9 +184,8 @@ class Builder {
 				nfs.push(f);
 				continue;
 			}
-			var ofc:Function = cast f.kind.getParameters()[0];
 			switch(f.kind) {
-				case FFun(fc):
+				case FFun(ofc):
 					var ef = Reflect.copy(f);
 					ef.kind = FieldType.FFun(Reflect.copy(ofc));
 					var nfc:Function = ef.kind.getParameters()[0];
@@ -192,13 +197,21 @@ class Builder {
 					of.kind = FieldType.FVar(macro:ffi.Function);
 					inits.push(macro $i{of.name} = lib[$v{f.name}]);
 					nfs.push(of);
-					var cif = Reflect.copy(ef);
-					cif.name = '_cif_${f.name}';
-					cif.kind = FieldType.FVar(macro:ffi.CallInterface);
-					inits.push(macro $i{cif.name} = new ffi.CallInterface());
-					nfs.push(cif);
-					inits.push(macro $i{cif.name}.prep(${{expr: EArrayDecl([for(a in ofc.args) toFFIType(a.type)]), pos: Context.currentPos()}}, ${toFFIType(f.kind.getParameters()[0].ret)}));
-					var fexpr = macro $i{cif.name}.call($i{of.name}, ${{pos: cif.pos, expr: EArrayDecl([for(a in nfc.args) ${convertFromHaxe(macro $i{a.name}, a.type)}])}});
+					var type = funcToType(ofc);
+					var cifname = if(!cifs.exists(type)) {
+						var cif = Reflect.copy(ef);
+						var rx = ~/[^a-zA-Z0-9_]/g;
+						cif.name = '_cif_${rx.replace(type, "")}';
+						cif.kind = FieldType.FVar(macro:ffi.CallInterface);
+						inits.push(macro $i{cif.name} = new ffi.CallInterface());
+						nfs.push(cif);
+						inits.push(macro $i{cif.name}.prep(${{expr: EArrayDecl([for(a in ofc.args) toFFIType(a.type)]), pos: Context.currentPos()}}, ${toFFIType(f.kind.getParameters()[0].ret)}));
+						cifs.set(type, cif.name);
+						cif.name;
+					} else {
+						cifs.get(type);
+					}
+					var fexpr = macro $i{cifname}.call($i{of.name}, ${{pos: ef.pos, expr: EArrayDecl([for(a in nfc.args) ${convertFromHaxe(macro $i{a.name}, a.type)}])}});
 					#if !debug fexpr = macro try $fexpr catch(e:Dynamic) throw e+" in "+$v{f.name}; #end
 					f.kind = FieldType.FFun({
 						ret: nfc.ret,

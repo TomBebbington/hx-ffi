@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="FastMath" package="org.ffi.fastmath" version="1.0.0" company="TopHattedCoder" />
+	<app main="Main" path="bin" file="demo" />
+	
+	<source path="src" />
+	<haxelib name="openfl" />
+	<haxelib name="ffi" />
+</project>

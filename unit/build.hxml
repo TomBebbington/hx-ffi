@@ -3,10 +3,13 @@
 -lib ffi
 -lib nodejs
 -cmd node run.js
+-cmd echo neko
 --next
 -main Unit
 -x run
 -lib ffi
+-cmd echo java
+-debug
 --next
 -main Unit
 -java java

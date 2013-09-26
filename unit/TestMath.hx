@@ -14,6 +14,7 @@ class TestMath extends TestCase {
 		assertEquals(25.0, m.pow(5, 2));
 		assertEquals(21.0, m.pow(m.sqrt(21), 2));
 		assertEquals(256.0, m.pow(2, 8));
+		assertEquals(2.0, m.pow(4, 0.5));
 	}
 	public function testTrig():Void {
 		assertEquals(-1.0, m.cos(Math.PI));

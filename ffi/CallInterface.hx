@@ -30,11 +30,17 @@ class CallInterface {
 		return Status.OK;
 	}
 	public function call(fn:Function, args:Array<Dynamic>):Dynamic {
+		for(i in 0...argTypes.length) {
+			if(untyped argTypes[i].name.indexOf("int64") != -1)
+				args[i] = haxe.Int64.toInt(args[i]);
+		}
   		var func = Util.ffi.ForeignFunction(fn, returnType, argTypes);
 		var r:Dynamic = Reflect.callMethod(null, func, args);
 		return if(returnType.elements != null)
 			[for(f in Reflect.fields(r))
 				Reflect.field(r, f)];
+		else if(untyped returnType.name.indexOf("int64") != -1)
+			haxe.Int64.ofInt(r | 0);
 		else r;
 	}
 	public function toString():String

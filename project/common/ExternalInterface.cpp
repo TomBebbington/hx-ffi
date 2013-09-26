@@ -215,10 +215,10 @@ value hx_ffi_get_val(value ptr) {
 	return (value) val_data(ptr);
 }
 DEFINE_PRIM(hx_ffi_get_val, 1);
-value hx_ffi_get_ptr(value ptr, value type) {
-	return from_pointer((void*) unwrap_pointer(ptr), (ffi_type*) val_get_handle(type, k_ffi_type));
+value hx_ffi_get_ptr(value ptr, value type, value off) {
+	return from_pointer((void*) (unwrap_pointer(ptr) + val_int(off)), (ffi_type*) val_get_handle(type, k_ffi_type));
 }
-DEFINE_PRIM(hx_ffi_get_ptr, 2);
+DEFINE_PRIM(hx_ffi_get_ptr, 3);
 value hx_ffi_cif_call(value v_cif, value v_func, value v_args) {
 	const ffi_cif* cif = (ffi_cif*) val_data(v_cif);
 	void (*func)(void) = (void (*)()) val_data(v_func);

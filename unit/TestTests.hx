@@ -6,7 +6,7 @@ class TestTests extends TestCase {
 		t = new Tests();
 	}
 	public function testCool() {
-		assertEquals(null, t.get_null());
+		assertTrue(t.get_null() == null);
 		assertEquals(1337, t.get_cool_int());
 		assertEquals("Oranges", t.get_cool_str());
 		assertEquals(88, haxe.Int64.toInt(t.add(haxe.Int64.ofInt(34), haxe.Int64.ofInt(54))));
@@ -14,14 +14,18 @@ class TestTests extends TestCase {
 	}
 	public function testPerson() {
 		var personPtr:ffi.Pointer = t.make_person("Tom", 234);
+		var name:ffi.Pointer = personPtr.get(ffi.Type.POINTER);
 		var person:Person = personPtr.get(Person.TYPE);
-		assertEquals("name: Bobaffet, age: 23", new Person("Bobaffet", 23));
 		assertEquals("name: Tom, age: 234", person.toString());
+		assertEquals("name: Bobaffet, age: 23", new Person("Bobaffet", 23));
+		assertEquals("Tom", name.getString());
+		var age:Int = personPtr.get(ffi.Type.UINT8);
+		assertEquals(234, age);
 	}
 }
 @:struct(Person => {
 	var name:String;
-	var age:UInt16;
+	var age:UInt8;
 })
 @:lib("test/test.so")
 class Tests extends ffi.lib.EasyLibrary {
