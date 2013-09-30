@@ -211,14 +211,6 @@ value from_pointer(void* ptr, ffi_type* t) {
 			return alloc_null();
 	}
 }
-value hx_ffi_get_val(value ptr) {
-	return (value) val_data(ptr);
-}
-DEFINE_PRIM(hx_ffi_get_val, 1);
-value hx_ffi_get_ptr(value ptr, value type, value off) {
-	return from_pointer((void*) (unwrap_pointer(ptr) + val_int(off)), (ffi_type*) val_get_handle(type, k_ffi_type));
-}
-DEFINE_PRIM(hx_ffi_get_ptr, 3);
 value hx_ffi_cif_call(value v_cif, value v_func, value v_args) {
 	const ffi_cif* cif = (ffi_cif*) val_data(v_cif);
 	void (*func)(void) = (void (*)()) val_data(v_func);
@@ -275,17 +267,33 @@ value hx_ffi_load_symbol(value v_lib, value v_sym) {
 }
 DEFINE_PRIM(hx_ffi_load_symbol, 2);
 
-const value hx_ffi_get_str(const value ptr) {
-	return alloc_string((const char*) val_data(ptr));
+value hx_ffi_ptr_get_val(value ptr) {
+	return (value) val_data(ptr);
 }
-DEFINE_PRIM(hx_ffi_get_str, 1);
+DEFINE_PRIM(hx_ffi_ptr_get_val, 1);
+value hx_ffi_ptr_get(value ptr, value type, value off) {
+	return from_pointer((void*) (unwrap_pointer(ptr) + val_int(off)), (ffi_type*) val_get_handle(type, k_ffi_type));
+}
+DEFINE_PRIM(hx_ffi_ptr_get, 3);
+const value hx_ffi_ptr_get_str(const value ptr, const value len) {
+	const int v_len = val_int(len);
+	if(v_len == -1)
+		return alloc_string((const char*) val_data(ptr));
+	else
+		return alloc_string_len((const char*) val_data(ptr), v_len);
+}
+DEFINE_PRIM(hx_ffi_ptr_get_str, 2);
 
-const value hx_ffi_from_str(const value str) {
+const value hx_ffi_ptr_from_str(const value str) {
 	return wrap_pointer((const char*) val_string(str));
 }
-DEFINE_PRIM(hx_ffi_from_str, 1);
+DEFINE_PRIM(hx_ffi_ptr_from_str, 1);
 
-void hx_ffi_free(const value ptr) {
+value hx_ffi_ptr_alloc(const value bytes) {
+	return alloc_abstract(k_pointer, malloc(val_int(bytes)));
+}
+DEFINE_PRIM(hx_ffi_ptr_alloc, 1);
+void hx_ffi_ptr_free(const value ptr) {
 	free(val_data(ptr));
 }
-DEFINE_PRIM(hx_ffi_free, 1);
+DEFINE_PRIM(hx_ffi_ptr_free, 1);

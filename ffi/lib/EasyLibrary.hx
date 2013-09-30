@@ -108,7 +108,8 @@ class Builder {
 	}
 	public function run():Array<Field> {
 		var nfs:Array<Field> = [];
-		for(me in Context.getLocalClass().get().meta.get())
+		var localMeta = Context.getLocalClass().get().meta.get();
+		for(me in localMeta)
 			switch(me) {
 				case {name: ":struct", params: [{expr: EBinop(OpArrow, {expr:EConst(CIdent(structName))}, inner)}]}:
 					structs.push(structName);
@@ -227,7 +228,7 @@ class Builder {
 			}
 		}
 		var libName:String = null;
-		for(me in Context.getLocalClass().get().meta.get())
+		for(me in localMeta)
 			switch(me) {
 				case {name: ":lib"| "lib"| ":library"| "library" | "nlib" | ":nlib", params: [{expr: EConst(CString(name))}]}:
 					libName = name;

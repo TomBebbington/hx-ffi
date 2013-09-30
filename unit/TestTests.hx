@@ -14,13 +14,15 @@ class TestTests extends TestCase {
 	}
 	public function testPerson() {
 		var personPtr:ffi.Pointer = t.make_person("Tom", 234);
+		assertTrue(personPtr != null);
 		var name:ffi.Pointer = personPtr.get(ffi.Type.POINTER);
+		assertTrue(name != null);
+		assertEquals("Tom", haxe.io.Bytes.ofData(name.getBytes(3)).toString());
+		assertEquals("Tom", name.getString());
 		var person:Person = personPtr.get(Person.TYPE);
 		assertEquals("name: Tom, age: 234", person.toString());
 		assertEquals("name: Bobaffet, age: 23", new Person("Bobaffet", 23));
 		assertEquals("Tom", name.getString());
-		var age:Int = personPtr.get(ffi.Type.UINT8);
-		assertEquals(234, age);
 	}
 }
 @:struct(Person => {

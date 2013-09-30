@@ -1,15 +1,16 @@
+-cmd echo ======NODE======
+--next
 -main Unit
 -js run.js
 -lib ffi
 -lib nodejs
 -cmd node run.js
--cmd echo neko
+-cmd echo ======NEKO======
 --next
 -main Unit
 -x run
 -lib ffi
--cmd echo java
--debug
+-cmd echo ======JAVA======
 --next
 -main Unit
 -java java
