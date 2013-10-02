@@ -23,6 +23,8 @@ class TestTests extends TestCase {
 		assertEquals("name: Tom, age: 234", person.toString());
 		assertEquals("name: Bobaffet, age: 23", new Person("Bobaffet", 23));
 		assertEquals("Tom", name.getString());
+		assertEquals(42, t.answer);
+		t.print_answer();
 	}
 }
 @:struct(Person => {
@@ -37,4 +39,6 @@ class Tests extends ffi.lib.EasyLibrary {
 	public function get_null():Pointer;
 	public function add(a:UInt64, b:UInt64):UInt64;
 	public function make_person(name:String, age:UInt16):Pointer;
+	public var answer:Int;
+	public function print_answer():Void;
 }

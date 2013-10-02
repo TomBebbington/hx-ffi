@@ -186,6 +186,14 @@ class Builder {
 				continue;
 			}
 			switch(f.kind) {
+				case FVar(type, expr):
+					f.kind = FieldType.FProp("get", "never", type);
+					nfs.push(f);
+					var getExpr = macro return this.lib.get($v{f.name}).get(${toFFIType(type)});
+					var getter = Reflect.copy(f);
+					getter.name = 'get_${f.name}';
+					getter.kind = FFun({expr: convertToHaxe(getExpr, type), ret: toHaxeType(type), args: []});
+					nfs.push(getter);
 				case FFun(ofc):
 					var ef = Reflect.copy(f);
 					ef.kind = FieldType.FFun(Reflect.copy(ofc));
@@ -196,7 +204,7 @@ class Builder {
 					var of = Reflect.copy(f);
 					of.name = '_sym_${f.name}';
 					of.kind = FieldType.FVar(macro:ffi.Function);
-					inits.push(macro $i{of.name} = lib[$v{f.name}]);
+					inits.push(macro $i{of.name} = lib.get($v{f.name}));
 					nfs.push(of);
 					var type = funcToType(ofc);
 					var cifname = if(!cifs.exists(type)) {

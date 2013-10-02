@@ -27,3 +27,9 @@ struct person* make_person(char* name, unsigned char age) {
 	p -> age = age;
 	return p;
 }
+
+int answer = 42;
+
+void print_answer() {
+	printf("Answer: %i\n", answer);
+}

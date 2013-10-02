@@ -1,3 +1,14 @@
+-cmd echo ======JAVA======
+--next
+-main Unit
+-java java
+-lib ffi
+-cmd java -jar java/java.jar
+-cmd echo ======NEKO======
+--next
+-main Unit
+-x run
+-lib ffi
 -cmd echo ======NODE======
 --next
 -main Unit
@@ -5,14 +16,3 @@
 -lib ffi
 -lib nodejs
 -cmd node run.js
--cmd echo ======NEKO======
---next
--main Unit
--x run
--lib ffi
--cmd echo ======JAVA======
---next
--main Unit
--java java
--lib ffi
--cmd java -jar java/java.jar
