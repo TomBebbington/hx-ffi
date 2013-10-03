@@ -16,5 +16,5 @@ before_script:
   - haxelib dev ffi .
 
 script:
-  - cd project; haxelib run hxcpp Build.xml; cd ..
+  - cd project; make all; cd ..
   - cd unit; haxelib dev ffi ..; haxe build.hxml; cd ..
