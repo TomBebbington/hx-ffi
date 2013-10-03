@@ -76,9 +76,7 @@ value hx_ffi_type_get_elements(value t) {
 	if(ty -> type == FFI_TYPE_STRUCT) {
 		ffi_type** elements = ty -> elements;
 		uint len = 0;
-		while(true) {
-			if(elements[len] == NULL)
-				break;
+		while(elements[len] != NULL) {
 			len++;
 		}
 		value arr = alloc_array(len);
