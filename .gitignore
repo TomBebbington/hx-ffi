@@ -1,6 +1,6 @@
 cpp/
 obj/
-java/
+unit/java/
 all_objs
 *.n
 *.so
