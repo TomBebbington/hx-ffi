@@ -1,6 +1,12 @@
 package ffi;
 
-#if display
+#if(!macro && (neko || cpp))
+typedef CallInterface = ffi.native.neko.CallInterface;
+#elseif java
+typedef CallInterface = ffi.native.java.CallInterface;
+#elseif(nodejs && js)
+typedef CallInterface = ffi.native.node.CallInterface;
+#else
 /** Describes a callable function's interface **/
 extern class CallInterface {
 	/** The type it returns **/
@@ -16,10 +22,4 @@ extern class CallInterface {
 	/** Returns a string representation of the function **/
 	public function toString():String;
 }
-#elseif(nodejs && js)
-typedef CallInterface = ffi.native.node.CallInterface;
-#elseif java
-typedef CallInterface = ffi.native.java.CallInterface;
-#else
-typedef CallInterface = ffi.native.neko.CallInterface;
 #end

@@ -13,6 +13,8 @@ class TestTests extends TestCase {
 		t.print_str("Hello, world!\n");
 	}
 	public function testPerson() {
+		assertEquals(42, t.answer);
+		t.print_answer();
 		var personPtr:ffi.Pointer = t.make_person("Tom", 234);
 		assertTrue(personPtr != null);
 		var name:ffi.Pointer = personPtr.get(ffi.Type.POINTER);
@@ -23,8 +25,6 @@ class TestTests extends TestCase {
 		assertEquals("name: Tom, age: 234", person.toString());
 		assertEquals("name: Bobaffet, age: 23", new Person("Bobaffet", 23));
 		assertEquals("Tom", name.getString());
-		assertEquals(42, t.answer);
-		t.print_answer();
 	}
 }
 @:struct(Person => {

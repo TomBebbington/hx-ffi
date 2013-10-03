@@ -1,6 +1,12 @@
 package ffi;
 
-#if (display||macro||xml)
+#if(!macro && (neko || cpp))
+typedef Pointer = ffi.native.node.Pointer;
+#elseif java
+typedef Pointer = ffi.native.java.Pointer;
+#elseif(nodejs && js)
+typedef Pointer = ffi.native.neko.Pointer;
+#else
 /** Represents a pointer **/
 extern class Pointer {
 	/** Allocate the space given **/
@@ -18,10 +24,4 @@ extern class Pointer {
 	/** Writes to this pointer with the bytes given **/
 	function setBytes(bytes:haxe.io.BytesData):Void;
 }
-#elseif(nodejs && js)
-typedef Pointer = ffi.native.node.Pointer;
-#elseif java
-typedef Pointer = ffi.native.java.Pointer;
-#else
-typedef Pointer = ffi.native.neko.Pointer;
 #end

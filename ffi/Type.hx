@@ -1,11 +1,11 @@
 package ffi;
 
-#if(nodejs && js)
-typedef Type = ffi.native.node.Type;
+#if(!macro && (neko || cpp))
+typedef Type = ffi.native.neko.Type;
 #elseif java
 typedef Type = ffi.native.java.Type;
-#elseif(!macro && (neko || cpp))
-typedef Type = ffi.native.neko.Type;
+#elseif(nodejs && js)
+typedef Type = ffi.native.node.Type;
 #else
 /** A native type **/
 extern class Type {
