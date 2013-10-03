@@ -4,10 +4,9 @@
 #include <ffi.h>
 #include <stdio.h>
 #include <string.h>
-#include <sstream>
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #define WINDOWS
-#include <windows.h>
+#include <windows>
 #else
 #define UNIX
 #include <dlfcn.h>
@@ -224,11 +223,6 @@ value hx_ffi_cif_call(value v_cif, value v_func, value v_args) {
 	return from_pointer(ret_space, cif -> rtype);
 }
 DEFINE_PRIM(hx_ffi_cif_call, 3);
-const char* concat(const char* a, const char* b) {
-	std::stringstream ss;
-	ss << a << b;
-	return ss.str().c_str();
-}
 value hx_ffi_load_library(value v_path) {
 	const char* path = val_string(v_path);
 	void* library;
