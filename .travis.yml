@@ -13,7 +13,8 @@ before_script:
   - haxelib install hxcpp                              # install hxcpp to test C++ target
   - haxelib install hxjava
   - haxelib install nodejs
+  - haxelib dev ffi .
 
 script:
   - cd project; haxelib run hxcpp Build.xml; cd ..
-  - cd unit; haxe build.hxml; cd ..
+  - cd unit; haxelib dev ffi ..; haxe build.hxml; cd ..
