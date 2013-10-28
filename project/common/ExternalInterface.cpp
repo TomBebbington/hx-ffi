@@ -4,6 +4,7 @@
 #include <ffi.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #define WINDOWS
 #include <windows>
@@ -58,9 +59,9 @@ value hx_ffi_get_type_alignment(value type) {
 DEFINE_PRIM(hx_ffi_get_type_alignment, 1);
 
 value hx_ffi_make_struct_type(value els) {
-	const uint len = val_array_size(els);
+	const unsigned int len = val_array_size(els);
 	ffi_type** elements = new ffi_type*[len+1];
-	for(uint i=0;i<len;i++) {
+	for(unsigned int i=0;i<len;i++) {
 		elements[i] = (ffi_type*) val_data(val_array_i(els, i));
 	}
 	elements[len] = NULL;
@@ -75,12 +76,12 @@ value hx_ffi_type_get_elements(value t) {
 	ffi_type* ty = (ffi_type*) val_data(t);
 	if(ty -> type == FFI_TYPE_STRUCT) {
 		ffi_type** elements = ty -> elements;
-		uint len = 0;
+		unsigned int len = 0;
 		while(elements[len] != NULL) {
 			len++;
 		}
 		value arr = alloc_array(len);
-		for(uint i=0; i<len;i++)
+		for(unsigned int i=0; i<len;i++)
 			val_array_set_i(arr, i, alloc_abstract(k_ffi_type, elements[i]));
 		return arr;
 	} else {
@@ -102,9 +103,9 @@ DEFINE_PRIM(hx_ffi_cif_get_return_type, 1);
 
 value hx_ffi_cif_get_arg_types(value v_cif) {
 	const ffi_cif* cif = (ffi_cif*) val_data(v_cif);
-	const uint num = cif -> nargs;
+	const unsigned int num = cif -> nargs;
 	value v = alloc_array(num);
-	for(uint i=0;i<num;i++) {
+	for(unsigned int i=0;i<num;i++) {
 		val_array_set_i(v, i, alloc_abstract(k_ffi_type, cif -> arg_types[i]));
 	}
 	return v;
@@ -113,9 +114,9 @@ DEFINE_PRIM(hx_ffi_cif_get_arg_types, 1);
 
 value hx_ffi_cif_prep(value v_cif, value v_args, value v_ret) {
 	const ffi_cif* cif = (ffi_cif*) val_data(v_cif);
-	const uint args_size = val_array_size(v_args);
+	const unsigned int args_size = val_array_size(v_args);
 	ffi_type** args = new ffi_type*[args_size];
-	for(uint i=0;i<args_size;i++) {
+	for(unsigned int i=0;i<args_size;i++) {
 		args[i] = (ffi_type*) val_data(val_array_i(v_args, i));
 	}
 	const ffi_type* ret = (ffi_type*) val_data(v_ret);
@@ -126,7 +127,7 @@ DEFINE_PRIM(hx_ffi_cif_prep, 3);
 #define PTR_TYPE(ffi, c, neko)		case ffi: return new c(neko(val));
 value from_pointer(void* ptr, ffi_type* t);
 void* to_pointer(value val, ffi_type* t) {
-	const uint type = t -> type;
+	const unsigned int type = t -> type;
 	switch(type) {
 		PTR_TYPE(FFI_TYPE_INT, int, val_int)
 		PTR_TYPE(FFI_TYPE_FLOAT, float, val_number)
@@ -146,10 +147,10 @@ void* to_pointer(value val, ffi_type* t) {
 			return new int64_t(low | (high << 32));
 		}
 		case FFI_TYPE_STRUCT: {
-			const uint size = t -> size;
+			const unsigned int size = t -> size;
 			uintptr_t v = (uintptr_t) malloc(size);
 			ffi_type** elem = t -> elements;
-			uint i = 0;
+			unsigned int i = 0;
 			while(*elem != NULL) {
 				const ffi_type* curr = *elem;
 				const size_t size = curr -> size;
@@ -183,12 +184,12 @@ value from_pointer(void* ptr, ffi_type* t) {
 		FROM_TYPE(FFI_TYPE_SINT32, int32_t, alloc_int)
 		FROM_TYPE(FFI_TYPE_POINTER, uintptr_t, wrap_pointer)
 		case FFI_TYPE_STRUCT: {
-			uint size = 0;
+			unsigned int size = 0;
 			while(t -> elements[size] != NULL)
 				size++;
 			value obj = alloc_array(size);
 			uintptr_t btrptr = (uintptr_t) ptr;
-			for(uint i=0, off = 0; i < size; i++) {
+			for(unsigned int i=0, off = 0; i < size; i++) {
 				const ffi_type* curr = t -> elements[i];
 				val_array_set_i(obj, i, from_pointer((void*) btrptr, (ffi_type*) curr));
 				btrptr += curr -> size;
@@ -211,10 +212,10 @@ value from_pointer(void* ptr, ffi_type* t) {
 value hx_ffi_cif_call(value v_cif, value v_func, value v_args) {
 	const ffi_cif* cif = (ffi_cif*) val_data(v_cif);
 	void (*func)(void) = (void (*)()) val_data(v_func);
-	const uint num_args = val_array_size(v_args);
+	const unsigned int num_args = val_array_size(v_args);
 	void* ret_space = malloc(cif -> rtype -> size);
 	void** args = new void*[num_args];
-	for(uint i = 0; i < num_args; i++) {
+	for(unsigned int i = 0; i < num_args; i++) {
 		args[i] = to_pointer(val_array_i(v_args, i), cif -> arg_types[i]);
 	}
 	ffi_call((ffi_cif*) cif, func, ret_space, args);
