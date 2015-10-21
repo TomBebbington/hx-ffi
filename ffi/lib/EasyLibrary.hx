@@ -95,12 +95,14 @@ class Builder {
 					switch(ie.expr) {
 						case EVars(vars):
 							for(va in vars) {
-								elements.push(toFFIType(va.type));
+								elements.push(toFFIType(va.type, e.pos));
 							}
-						default: throw "Bad struct";
+						default:
+							Context.error("Invalid struct definition", e.pos);
 					}
 				return macro ffi.Type.createStruct(${{expr: EArrayDecl(elements), pos: e.pos}});
-			default: throw "Bad struct";
+			default:
+				Context.error("Invalid struct definition", e.pos);
 		};
 	}
 	static function funcToType(f:Function):String {
@@ -189,7 +191,7 @@ class Builder {
 				case FVar(type, expr):
 					f.kind = FieldType.FProp("get", "never", type);
 					nfs.push(f);
-					var getExpr = macro return this.lib[$v{f.name}].get(${toFFIType(type)});
+					var getExpr = macro return this.lib[$v{f.name}].get(${toFFIType(type, f.pos)});
 					var getter = Reflect.copy(f);
 					getter.name = 'get_${f.name}';
 					getter.kind = FFun({expr: convertToHaxe(getExpr, type), ret: toHaxeType(type), args: []});
@@ -214,7 +216,7 @@ class Builder {
 						cif.kind = FieldType.FVar(macro:ffi.CallInterface);
 						inits.push(macro $i{cif.name} = new ffi.CallInterface());
 						nfs.push(cif);
-						inits.push(macro $i{cif.name}.prep(${{expr: EArrayDecl([for(a in ofc.args) toFFIType(a.type)]), pos: Context.currentPos()}}, ${toFFIType(f.kind.getParameters()[0].ret)}));
+						inits.push(macro $i{cif.name}.prep(${{expr: EArrayDecl([for(a in ofc.args) toFFIType(a.type, f.pos)]), pos: Context.currentPos()}}, ${toFFIType(f.kind.getParameters()[0].ret, f.pos)}));
 						cifs.set(type, cif.name);
 						cif.name;
 					} else {
@@ -243,7 +245,7 @@ class Builder {
 				default:
 			}
 		if(libName == null)
-			throw "Library path or native name must be specified";
+			Context.error("Library path or native name must be specified", Context.currentPos());
 		var initBlock = {expr: EBlock(inits), pos: Context.currentPos()};
 		nfs.push({access: [APublic], pos: Context.currentPos(), name: "new", kind: FieldType.FFun({ret: macro:Void, params: [], args: [], expr: macro  {
 			super($v{libName});
@@ -292,7 +294,7 @@ class Builder {
 			default: c;
 		};
 	}
-	public function toFFIType(c:ComplexType):Expr {
+	public function toFFIType(c:ComplexType, p):Expr {
 		return switch(c) {
 			case macro:String: macro ffi.Type.POINTER;
 			case macro:Float: macro ffi.Type.DOUBLE;
@@ -307,7 +309,8 @@ class Builder {
 				if(StringTools.startsWith(ename, "INT"))
 					ename = "S" + ename;
 				macro ffi.Type.$ename;
-			default: throw 'Unsupported type ${haxe.macro.ComplexTypeTools.toString(c)}';
+			default:
+				Context.error('Unsupported type ${haxe.macro.ComplexTypeTools.toString(c)}', p);
 		}
 	}
 	public static function build():Array<Field> {
