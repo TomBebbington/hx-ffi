@@ -1,6 +1,6 @@
 {
 	"name": "ffi",
-	"url" : "https://github.com/TopHattedCoder/hx-ffi/",
+	"url" : "https://github.com/TomBebbington/hx-ffi/",
 	"license": "MIT",
 	"tags": [
 		"neko",
@@ -11,8 +11,8 @@
 		"binding"
 	],
 	"description": "Easy FFI for accessing native shared libraries",
-	"version": "0.0.2",
-	"releasenote": "Alpha release",
+	"version": "0.2.0",
+	"releasenote": "Beta release",
 	"contributors": [
 		"TopHattedCoder"
 	],
