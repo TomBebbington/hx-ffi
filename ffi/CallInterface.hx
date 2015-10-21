@@ -7,19 +7,30 @@ typedef CallInterface = ffi.native.java.CallInterface;
 #elseif(nodejs && js)
 typedef CallInterface = ffi.native.node.CallInterface;
 #else
-/** Describes a callable function's interface **/
+/** Describes a callable function's interface. **/
 extern class CallInterface {
-	/** The type it returns **/
+	/** The type this function returns. **/
 	public var returnType(default, never):Type;
-	/** The arguments it accepts **/
+	/** The types of the arguments this function accepts. **/
 	public var argTypes(default, never):Array<Type>;
-	/** Constructs an empty calling interface **/
+	/** Constructs an empty calling interface. **/
 	public function new():Void;
-	/** Prepares it for calling by providing type information to the API **/
+	/**
+		Prepares it for calling by providing type information to the API.
+		@param args The types of the arguments this function accepts.
+		@param ret The return type of this function.
+		@return The status of this action.
+	**/
 	public function prep(args:Array<Type>, ret:Type):Status;
-	/** Returns the result of calling fn with the arguments specified **/
+	/**
+		Calls the function with the arguments given.
+		@param fn The function to call.
+		@param args The arguments to call it with.
+		@return The return value of the function.
+	**/
 	public function call(fn:Function, args:Array<Dynamic>):Dynamic;
-	/** Returns a string representation of the function **/
+
+	/** Returns a string representation of the function. **/
 	public function toString():String;
 }
 #end

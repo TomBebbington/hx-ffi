@@ -1,6 +1,7 @@
-package samples.fastmath;
 import ffi.*;
 import ffi.lib.*;
+
+@:lib("m")
 class FastMath extends ffi.lib.EasyLibrary {
 	public function cos(f:Float):Float;
 	public function sin(f:Float):Float;

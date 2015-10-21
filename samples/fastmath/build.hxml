@@ -1,0 +1,5 @@
+-lib ffi
+-neko fastmath.n
+-dce full
+-main FastMath
+-cmd neko fastmath.n
