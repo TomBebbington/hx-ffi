@@ -1,11 +1,11 @@
 package ffi;
 
 /** A CIF initialisation status. **/
-enum Status {
+@:enum abstract Status(Int) {
 	/** The CIF worked on the function. **/
-	OK;
+	var OK = 0;
 	/** The type definition in the CIF does not match the function's. **/
-	BAD_TYPEDEF;
+	var BAD_TYPEDEF = 1;
 	/** The Application Binary Interface in the CIF does not match the function's. **/
-	BAD_ABI;
+	var BAD_ABI = 2;
 }

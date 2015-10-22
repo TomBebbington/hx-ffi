@@ -1,6 +1,5 @@
 package ffi.native.neko;
-import Type in HxType;
-/** Note: ABI is assumed to be JIT_ABI_DEFAULT **/
+
 abstract CallInterface(Dynamic) {
 	public var returnType(get, never):Type;
 	public var argTypes(get, never):Array<Type>;
@@ -11,7 +10,7 @@ abstract CallInterface(Dynamic) {
 	public inline function new()
 		this = ffi_cif_create();
 	public inline function prep(args:Array<Type>, ret:Type):Status
-		return HxType.createEnumIndex(Status, ffi_cif_prep(this, args, ret));
+		return ffi_cif_prep(this, args, ret);
 	public function toString():String
 		return (argTypes.length == 0 ? "Void" : argTypes.map(Type.toString).join(" -> ")) + " -> " + returnType.toString();
 	public inline function call(fn:Function, args:Array<Dynamic>):Dynamic {
