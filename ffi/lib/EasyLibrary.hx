@@ -203,17 +203,25 @@ class Builder {
 					nfc.args = [for(a in nfc.args)
 						{name: a.name, type: toHaxeType(a.type), opt: a.opt}];
 					nfc.ret = toHaxeType(nfc.ret);
-					var of = Reflect.copy(f);
-					of.name = '_sym_${f.name}';
-					of.kind = FieldType.FVar(macro:ffi.Function);
+					var of:Field = {
+						pos: f.pos,
+						name: '_sym_${f.name}',
+						kind: FieldType.FVar(macro:ffi.Function),
+						access: [Access.APrivate]
+					};
 					inits.push(macro $i{of.name} = lib[$v{f.name}]);
 					nfs.push(of);
 					var type = funcToType(ofc);
 					var cifname = if(!cifs.exists(type)) {
-						var cif = Reflect.copy(ef);
 						var rx = ~/[^a-zA-Z0-9_]/g;
-						cif.name = '_cif_${rx.replace(type, "")}';
-						cif.kind = FieldType.FVar(macro:ffi.CallInterface);
+						var seps = ~/->/g;
+						var name = seps.replace(type, "_");
+						name = rx.replace(name, "");
+						var cif:Field = {
+							pos: ef.pos,
+							name: '_cif_$name',
+							kind: FieldType.FVar(macro:ffi.CallInterface)
+						};
 						inits.push(macro $i{cif.name} = new ffi.CallInterface());
 						nfs.push(cif);
 						inits.push(macro $i{cif.name}.prep(${{expr: EArrayDecl([for(a in ofc.args) toFFIType(a.type, f.pos)]), pos: Context.currentPos()}}, ${toFFIType(f.kind.getParameters()[0].ret, f.pos)}));
@@ -223,7 +231,10 @@ class Builder {
 						cifs.get(type);
 					}
 					var fexpr = macro $i{cifname}.call($i{of.name}, ${{pos: ef.pos, expr: EArrayDecl([for(a in nfc.args) ${convertFromHaxe(macro $i{a.name}, a.type)}])}});
-					#if !debug fexpr = macro try $fexpr catch(e:Dynamic) throw e+" in "+$v{f.name}; #end
+					#if debug
+						fexpr = macro try $fexpr catch(e:Dynamic) throw e+" in "+$v{f.name};
+					#end
+					f.access.push(Access.AInline);
 					f.kind = FieldType.FFun({
 						ret: nfc.ret,
 						params: [],

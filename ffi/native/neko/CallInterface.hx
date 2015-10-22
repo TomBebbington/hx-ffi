@@ -15,8 +15,8 @@ abstract CallInterface(Dynamic) {
 		return (argTypes.length == 0 ? "Void" : argTypes.map(Type.toString).join(" -> ")) + " -> " + returnType.toString();
 	public inline function call(fn:Function, args:Array<Dynamic>):Dynamic {
 		var r:Dynamic = ffi_cif_call(this, fn, args);
-		return switch(returnType.type) {
-			case ffi.Type.TYPE_SINT64, ffi.Type.TYPE_UINT64:
+		return switch(returnType.kind) {
+			case SINT64 | UINT64:
 				haxe.Int64.make(r.high, r.low);
 			default: r;
 		}

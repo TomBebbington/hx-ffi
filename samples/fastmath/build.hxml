@@ -3,3 +3,10 @@
 -dce full
 -main FastMath
 -cmd neko fastmath.n
+--next
+-lib ffi
+-lib nodejs
+-js fastmath.js
+-dce full
+-main FastMath
+-cmd nodejs fastmath.js

@@ -1,5 +1,7 @@
 package ffi.native.node;
 
+import ffi.TypeKind;
+
 extern class NodeType<T> {
 	var name:String;
 	var size:Int;
@@ -11,52 +13,35 @@ extern class NodeType<T> {
 }
 
 abstract Type(NodeType<Dynamic>) from NodeType<Dynamic> to NodeType<Dynamic> {
-	public var type(get, never):Int;
+	public var kind(get, never): TypeKind;
 	public var size(get, never):Int;
 	public var alignment(get, never):Int;
 	public var elements(get, never):Null<Array<Type>>;
 	inline function get_elements():Array<Type>
 		return this.fields == null ? null : [for(f in Reflect.fields(this.fields)) Reflect.field(this.fields, f).type];
-	function get_type():Int
+	function get_kind():TypeKind
 		return switch(this.name) {
-			case "void": TYPE_VOID;
-			case "int", "uint": TYPE_INT;
-			case "float": TYPE_FLOAT;
-			case "double": TYPE_DOUBLE;
-			case "uint8": TYPE_UINT8;
-			case "int8": TYPE_SINT8;
-			case "uint16": TYPE_UINT16;
-			case "int16": TYPE_SINT16;
-			case "uint32": TYPE_UINT32;
-			case "int32": TYPE_SINT32;
-			case "uint64": TYPE_UINT64;
-			case "int64": TYPE_SINT64;
-			case "StructType": TYPE_STRUCT;
+			case "void": TypeKind.VOID;
+			case "int", "uint": TypeKind.INT;
+			case "float": TypeKind.FLOAT;
+			case "double": TypeKind.DOUBLE;
+			case "uint8": TypeKind.UINT8;
+			case "int8": TypeKind.SINT8;
+			case "uint16": TypeKind.UINT16;
+			case "int16": TypeKind.SINT16;
+			case "uint32": TypeKind.UINT32;
+			case "int32": TypeKind.SINT32;
+			case "uint64": TypeKind.UINT64;
+			case "int64": TypeKind.SINT64;
+			case "StructType": TypeKind.STRUCT;
 			case all: throw 'Unrecognised type $all';
 		};
 	inline function get_alignment():Int
 		return this.alignment;
 	inline function get_size():Int
 		return this.size;
-	@:keep public function toString():String
-		return switch(type) {
-			case TYPE_VOID: "Void";
-			case TYPE_INT: "Int";
-			case TYPE_FLOAT: "Single";
-			case TYPE_DOUBLE: "Double";
-			case TYPE_LONGDOUBLE: "LongDouble";
-			case TYPE_UINT8: "UInt8";
-			case TYPE_SINT8: "Int8";
-			case TYPE_UINT16: "UInt16";
-			case TYPE_SINT16: "Int16";
-			case TYPE_UINT32: "UInt32";
-			case TYPE_SINT32: "Int32";
-			case TYPE_UINT64: "UInt64";
-			case TYPE_SINT64: "Int64";
-			case TYPE_STRUCT: "{" + [for(e in elements) e.toString()].join(", ") + "}";
-			case TYPE_POINTER: "Pointer";
-			default: throw 'Invalid type $type';
-		};
+	public inline function toString():String
+		return get_kind().toString();
 	public static function createStruct(elements:Array<Type>):Type {
 		var obj:Dynamic = {};
 		for(i in 0...elements.length)  {
@@ -84,19 +69,4 @@ abstract Type(NodeType<Dynamic>) from NodeType<Dynamic> to NodeType<Dynamic> {
 	public static var UINT(default, never):Type = Util.ref.types.uint;
 	public static var SINT(default, never):Type = Util.ref.types.int;
 	public static var POINTER(default, never):Type = Util.ref.refType(Util.ref.types.void);
-	public static inline var TYPE_VOID:Int = 0;
-	public static inline var TYPE_INT:Int = 1;
-	public static inline var TYPE_FLOAT:Int = 2;
-	public static inline var TYPE_DOUBLE:Int = 3;
-	public static inline var TYPE_LONGDOUBLE:Int = 4;
-	public static inline var TYPE_UINT8:Int = 5;
-	public static inline var TYPE_SINT8:Int = 6;
-	public static inline var TYPE_UINT16:Int = 7;
-	public static inline var TYPE_SINT16:Int = 8;
-	public static inline var TYPE_UINT32:Int = 9;
-	public static inline var TYPE_SINT32:Int = 10;
-	public static inline var TYPE_UINT64:Int = 11;
-	public static inline var TYPE_SINT64:Int = 12;
-	public static inline var TYPE_STRUCT:Int = 13;
-	public static inline var TYPE_POINTER:Int = 14;
 }
