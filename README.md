@@ -1,4 +1,4 @@
-HxFFI
+HxFFI [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE.md) [![Haxelib Version](https://img.shields.io/github/tag/TopHattedCoder/hx-ffi.svg?style=flat&label=haxelib)](http://lib.haxe.org/p/ffi)
 =====
 HxFFI is a Haxe library that allows you to quickly use native libraries quickly without any wrappers! It does this using LibFFI and uses a similar method to JNA.
 
