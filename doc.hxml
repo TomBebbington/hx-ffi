@@ -1,8 +1,10 @@
 -cp src
 -xml doc/doc.xml
---macro include('ffi')
---macro exclude('ffi.native.java')
---macro exclude('ffi.native.neko')
---macro exclude('ffi.native.node')
+--macro include('ffi.lib')
+--macro include('ffi.CallInterface')
+--macro include('ffi.Function')
+--macro include('ffi.Pointer')
+--macro include('ffi.Status')
+--macro include('ffi.Type')
 -D doc
 -neko _

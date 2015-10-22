@@ -10,6 +10,22 @@
 			<meta><m n=":has_untyped"/></meta>
 			<haxe_doc>Load and return a Neko primitive from a NDLL library.</haxe_doc>
 		</load>
+		<nekoToHaxe public="1" set="method" line="95" static="1">
+			<f a="v">
+				<d/>
+				<d/>
+			</f>
+			<meta><m n=":has_untyped"/></meta>
+			<haxe_doc>Converts a Neko value to its Haxe equivalent. Used for wrapping String and Arrays raw values into Haxe Objects.</haxe_doc>
+		</nekoToHaxe>
+		<haxeToNeko public="1" set="method" line="127" static="1">
+			<f a="v">
+				<d/>
+				<d/>
+			</f>
+			<meta><m n=":has_untyped"/></meta>
+			<haxe_doc>Converts a Haxe value to its Neko equivalent. Used to unwrap String and Arrays Objects into raw Neko values.</haxe_doc>
+		</haxeToNeko>
 		<meta>
 			<m n=":keep"/>
 			<m n=":directlyUsed"/>
@@ -347,6 +363,46 @@
 			<m n=":runtimeValue"/>
 		</meta>
 	</abstract>
+	<class path="Date" params="" file="/usr/share/haxe/std/neko/_std/Date.hx">
+		<date_format line="93" static="1"><f a=":">
+	<d/>
+	<unknown/>
+	<c path="String"/>
+</f></date_format>
+		<__string set="method" line="101" static="1">
+			<f a=""><c path="String"/></f>
+			<meta>
+				<m n=":has_untyped"/>
+				<m n=":keep"/>
+			</meta>
+		</__string>
+		<__t><d/></__t>
+		<toString public="1" set="method" line="65">
+			<f a=""><c path="String"/></f>
+			<meta><m n=":keep"/></meta>
+			<haxe_doc>Returns a string representation of `this` Date, by using the
+		standard format [YYYY-MM-DD HH:MM:SS]. See `DateTools.format` for
+		other formating rules.</haxe_doc>
+		</toString>
+		<haxe_doc>The Date class provides a basic structure for date and time related
+	information. Date instances can be created by
+
+	- `new Date()` for a specific date,
+	- `Date.now()` to obtain information about the current time,
+	- `Date.fromTime()` with a given timestamp or
+	- `Date.fromString()` by parsing from a String.
+
+	There is some extra functions available in the `DateTools` class.
+
+	In the context of haxe dates, a timestamp is defined as the number of
+	milliseconds elapsed since 1st January 1970.</haxe_doc>
+		<meta>
+			<m n=":keep"/>
+			<m n=":directlyUsed"/>
+			<m n=":coreApi"/>
+			<m n=":final"/>
+		</meta>
+	</class>
 	<abstract path="Enum" params="T" file="/usr/share/haxe/std/Enum.hx">
 		<this><x path="Enum"><c path="Enum.T"/></x></this>
 		<haxe_doc>An abstract type that represents an Enum type.
@@ -366,6 +422,53 @@
 	See `Type` for the Haxe Reflection API.</haxe_doc>
 		<meta><m n=":coreType"/></meta>
 	</abstract>
+	<abstract path="Map" params="K:V" file="/usr/share/haxe/std/Map.hx">
+		<from>
+			<icast field="fromStringMap"><c path="haxe.ds.StringMap"><c path="fromStringMap.V"/></c></icast>
+			<icast field="fromIntMap"><c path="haxe.ds.IntMap"><c path="fromIntMap.V"/></c></icast>
+			<icast field="fromObjectMap"><c path="haxe.ds.ObjectMap">
+	<c path="fromObjectMap.K"/>
+	<c path="fromObjectMap.V"/>
+</c></icast>
+		</from>
+		<this><t path="IMap">
+	<c path="Map.K"/>
+	<c path="Map.V"/>
+</t></this>
+		<to>
+			<icast field="toStringMap"><c path="haxe.ds.StringMap"><c path="toStringMap.V"/></c></icast>
+			<icast field="toIntMap"><c path="haxe.ds.IntMap"><c path="toIntMap.V"/></c></icast>
+			<icast field="toEnumValueMapMap"><c path="haxe.ds.EnumValueMap">
+	<c path="toEnumValueMapMap.K"/>
+	<c path="toEnumValueMapMap.V"/>
+</c></icast>
+			<icast field="toObjectMap"><c path="haxe.ds.ObjectMap">
+	<c path="toObjectMap.K"/>
+	<c path="toObjectMap.V"/>
+</c></icast>
+		</to>
+		<haxe_doc><![CDATA[Map allows key to value mapping for arbitrary value types, and many key
+	types.
+
+	This is a multi-type abstract, it is instantiated as one of its
+	specialization types depending on its type parameters.
+
+	A Map can be instantiated without explicit type parameters. Type inference
+	will then determine the type parameters from the usage.
+
+	Maps can also be created with `key1 => value1, key2 => value2` syntax.
+
+	Map is an abstract type, it is not available at runtime.]]></haxe_doc>
+		<meta><m n=":multiType"><e>K</e></m></meta>
+		<impl><class path="_Map.Map_Impl_" params="" file="/usr/share/haxe/std/Map.hx" private="1" module="Map"><meta><m n=":keep"/></meta></class></impl>
+	</abstract>
+	<typedef path="IMap" params="K:V" file="/usr/share/haxe/std/Map.hx" module="Map">
+		<c path="haxe.IMap">
+			<c path="IMap.K"/>
+			<c path="IMap.V"/>
+		</c>
+		<meta><m n=":deprecated"/></meta>
+	</typedef>
 	<abstract path="Int" params="" file="/usr/share/haxe/std/StdTypes.hx" module="StdTypes">
 		<this><x path="Int"/></this>
 		<to><icast><x path="Float"/></icast></to>
@@ -799,6 +902,334 @@
 			<m n=":coreApi"/>
 		</meta>
 	</class>
+	<class path="Sys" params="" file="/usr/share/haxe/std/neko/_std/Sys.hx">
+		<systemName public="1" set="method" line="90" static="1">
+			<f a=""><c path="String"/></f>
+			<haxe_doc>Returns the name of the system you are running on. For instance :
+			"Windows", "Linux", "BSD" and "Mac" depending on your desktop OS.</haxe_doc>
+		</systemName>
+		<sys_string line="152" static="1"><f a=""><c path="String"/></f></sys_string>
+		<haxe_doc>This class gives you access to many base functionalities of system platforms. Looks in [sys] sub packages for more system APIs.</haxe_doc>
+		<meta>
+			<m n=":keep"/>
+			<m n=":directlyUsed"/>
+			<m n=":coreApi"/>
+		</meta>
+	</class>
+	<class path="ffi.Pointer" params="" file="ffi/Pointer.hx" extern="1">
+		<getString public="1" set="method">
+			<f a=""><c path="String"/></f>
+			<haxe_doc>Get the string stored at this pointer's location.
+		@return The string stored.</haxe_doc>
+		</getString>
+		<fromString public="1" set="method">
+			<f a="text">
+				<c path="String"/>
+				<c path="ffi.Pointer"/>
+			</f>
+			<haxe_doc>Allocate a pointer for the string given.
+		@param text The string to allocate for.
+		@return The pointer allocated.</haxe_doc>
+		</fromString>
+		<get public="1" set="method">
+			<f a="type:?offset">
+				<c path="ffi.Type"/>
+				<x path="Int"/>
+				<d/>
+			</f>
+			<haxe_doc>Get this pointer as a certain type at the offset given.
+		@param type The type to get the pointer as.
+		@param offset The offset to add to this pointer.
+		@return The content of this pointer.</haxe_doc>
+		</get>
+		<getAsNekoValue public="1" set="method">
+			<f a=""><d/></f>
+			<haxe_doc>Get this pointer to a neko value as a neko value.
+		@return The value.</haxe_doc>
+		</getAsNekoValue>
+		<getBytes public="1" set="method">
+			<f a="length">
+				<x path="Int"/>
+				<t path="haxe.io.BytesData"/>
+			</f>
+			<haxe_doc>Get this pointer as a bytes with the length specified.
+		@param length The length of the bytes to get.
+		@return The bytes.</haxe_doc>
+		</getBytes>
+		<setBytes public="1" set="method">
+			<f a="bytes">
+				<t path="haxe.io.BytesData"/>
+				<x path="Void"/>
+			</f>
+			<haxe_doc>Writes to this pointer with the bytes given.
+		@param bytes The bytes to set.</haxe_doc>
+		</setBytes>
+		<new public="1" set="method">
+			<f a="bytes">
+				<x path="Int"/>
+				<x path="Void"/>
+			</f>
+			<haxe_doc>Allocate the number of bytes given.
+		@param bytes The number of bytes to allocate for.</haxe_doc>
+		</new>
+		<haxe_doc>Represents a pointer</haxe_doc>
+	</class>
+	<class path="ffi.Type" params="" file="ffi/Type.hx" extern="1">
+		<VOID public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Void type..</haxe_doc>
+		</VOID>
+		<UINT8 public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Unsigned 8-bit integer type.</haxe_doc>
+		</UINT8>
+		<SINT8 public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Signed 8-bit integer type.</haxe_doc>
+		</SINT8>
+		<UINT16 public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Unsigned 16-bit integer type.</haxe_doc>
+		</UINT16>
+		<SINT16 public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Signed 16-bit integer type.</haxe_doc>
+		</SINT16>
+		<UINT32 public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Unsigned 32-bit integer type.</haxe_doc>
+		</UINT32>
+		<SINT32 public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Signed 32-bit integer type.</haxe_doc>
+		</SINT32>
+		<UINT64 public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Unsigned 64-bit integer type.</haxe_doc>
+		</UINT64>
+		<SINT64 public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Signed 64-bit integer type.</haxe_doc>
+		</SINT64>
+		<FLOAT public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>32-bit float type.</haxe_doc>
+		</FLOAT>
+		<DOUBLE public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>64-bit float type.</haxe_doc>
+		</DOUBLE>
+		<UCHAR public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Unsigned char type.</haxe_doc>
+		</UCHAR>
+		<SCHAR public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Signed char type.</haxe_doc>
+		</SCHAR>
+		<USHORT public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Unsigned short type.</haxe_doc>
+		</USHORT>
+		<SSHORT public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Signed short type.</haxe_doc>
+		</SSHORT>
+		<UINT public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Unsigned native int type.</haxe_doc>
+		</UINT>
+		<SINT public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Signed native int type.</haxe_doc>
+		</SINT>
+		<POINTER public="1" set="null" static="1">
+			<c path="ffi.Type"/>
+			<haxe_doc>Pointer type.</haxe_doc>
+		</POINTER>
+		<TYPE_VOID public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Void type.</haxe_doc>
+		</TYPE_VOID>
+		<TYPE_INT public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Native integer type.</haxe_doc>
+		</TYPE_INT>
+		<TYPE_FLOAT public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>32-bit floating-point type.</haxe_doc>
+		</TYPE_FLOAT>
+		<TYPE_DOUBLE public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>64-bit floating-point type.</haxe_doc>
+		</TYPE_DOUBLE>
+		<TYPE_LONGDOUBLE public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>128-bit floating-point type.</haxe_doc>
+		</TYPE_LONGDOUBLE>
+		<TYPE_UINT8 public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Unsigned 8-bit integer type.</haxe_doc>
+		</TYPE_UINT8>
+		<TYPE_SINT8 public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Signed 8-bit integer type.</haxe_doc>
+		</TYPE_SINT8>
+		<TYPE_UINT16 public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Unsigned 16-bit integer type.</haxe_doc>
+		</TYPE_UINT16>
+		<TYPE_SINT16 public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Signed 16-bit integer type.</haxe_doc>
+		</TYPE_SINT16>
+		<TYPE_UINT32 public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Unsigned 32-bit integer type.</haxe_doc>
+		</TYPE_UINT32>
+		<TYPE_SINT32 public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Signed 32-bit integer type.</haxe_doc>
+		</TYPE_SINT32>
+		<TYPE_UINT64 public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Unsigned 64-bit integer type.</haxe_doc>
+		</TYPE_UINT64>
+		<TYPE_SINT64 public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Signed 64-bit integer type.</haxe_doc>
+		</TYPE_SINT64>
+		<TYPE_STRUCT public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Struct type.</haxe_doc>
+		</TYPE_STRUCT>
+		<TYPE_POINTER public="1" set="null" static="1">
+			<x path="Int"/>
+			<haxe_doc>Pointer type.</haxe_doc>
+		</TYPE_POINTER>
+		<createStruct public="1" set="method" static="1">
+			<f a="elements">
+				<c path="Array"><c path="ffi.Type"/></c>
+				<c path="ffi.Type"/>
+			</f>
+			<haxe_doc>Creates a struct with the specified elements
+		@param elements The elements of the struct.
+		@return The struct type created.</haxe_doc>
+		</createStruct>
+		<type public="1" set="null">
+			<x path="Int"/>
+			<haxe_doc>The type represented as an int.</haxe_doc>
+		</type>
+		<size public="1" set="null">
+			<x path="Int"/>
+			<haxe_doc>The size of the type, in bytes.</haxe_doc>
+		</size>
+		<alignment public="1" set="null">
+			<x path="Int"/>
+			<haxe_doc>The alignment of the type, in bytes.</haxe_doc>
+		</alignment>
+		<elements public="1" set="null">
+			<t path="Null"><c path="Array"><c path="ffi.Type"/></c></t>
+			<haxe_doc>The elements belonging to this type if this is a struct, or null otherwise.</haxe_doc>
+		</elements>
+		<toString public="1" set="method">
+			<f a=""><c path="String"/></f>
+			<haxe_doc>Return a string representation of the type.</haxe_doc>
+		</toString>
+		<haxe_doc>A native type.</haxe_doc>
+	</class>
+	<class path="ffi.lib.EasyLibrary" params="" file="ffi/lib/EasyLibrary.hx">
+		<EXTENSION public="1" line="24" static="1"><c path="String"/></EXTENSION>
+		<lib public="1" set="null"><t path="ffi.lib.Library"/></lib>
+		<name public="1" set="null"><c path="String"/></name>
+		<toString public="1" get="inline" set="null" line="70"><f a=""><c path="String"/></f></toString>
+		<new public="1" set="method" line="37"><f a="nameOrPath">
+	<c path="String"/>
+	<x path="Void"/>
+</f></new>
+		<meta>
+			<m n=":directlyUsed"/>
+			<m n=":autoBuild"><e>ffi.lib.EasyLibrary.build()</e></m>
+		</meta>
+	</class>
+	<typedef path="ffi.lib.Library" params="" file="ffi/lib/Library.hx"><x path="ffi.native.neko.Library"/></typedef>
+	<abstract path="ffi.native.neko.Library" params="" file="ffi/native/neko/Library.hx">
+		<this><d/></this>
+		<impl><class path="ffi.native.neko._Library.Library_Impl_" params="" file="ffi/native/neko/Library.hx" private="1" module="ffi.native.neko.Library">
+	<LOCAL public="1" get="inline" set="null" line="6" static="1"><x path="ffi.native.neko.Library"/></LOCAL>
+	<load public="1" get="inline" set="null" line="7" static="1"><f a="path">
+	<c path="String"/>
+	<x path="ffi.native.neko.Library"/>
+</f></load>
+	<get public="1" get="inline" set="null" line="9" static="1">
+		<f a="this:name">
+			<d/>
+			<c path="String"/>
+			<c path="ffi.Pointer"/>
+		</f>
+		<meta>
+			<m n=":impl"/>
+			<m n=":arrayAccess"/>
+		</meta>
+	</get>
+	<close public="1" get="inline" set="null" line="11" static="1">
+		<f a="this">
+			<d/>
+			<x path="Void"/>
+		</f>
+		<meta><m n=":impl"/></meta>
+	</close>
+	<ffi_load_library line="13" static="1"><d/></ffi_load_library>
+	<ffi_close_library line="14" static="1"><d/></ffi_close_library>
+	<ffi_load_symbol line="15" static="1"><d/></ffi_load_symbol>
+	<meta><m n=":directlyUsed"/></meta>
+</class></impl>
+	</abstract>
+	<class path="ffi.native.neko._Library.Library_Impl_" params="" file="ffi/native/neko/Library.hx" private="1" module="ffi.native.neko.Library">
+		<LOCAL public="1" get="inline" set="null" line="6" static="1"><x path="ffi.native.neko.Library"/></LOCAL>
+		<load public="1" get="inline" set="null" line="7" static="1"><f a="path">
+	<c path="String"/>
+	<x path="ffi.native.neko.Library"/>
+</f></load>
+		<get public="1" get="inline" set="null" line="9" static="1">
+			<f a="this:name">
+				<d/>
+				<c path="String"/>
+				<c path="ffi.Pointer"/>
+			</f>
+			<meta>
+				<m n=":impl"/>
+				<m n=":arrayAccess"/>
+			</meta>
+		</get>
+		<close public="1" get="inline" set="null" line="11" static="1">
+			<f a="this">
+				<d/>
+				<x path="Void"/>
+			</f>
+			<meta><m n=":impl"/></meta>
+		</close>
+		<ffi_load_library line="13" static="1"><d/></ffi_load_library>
+		<ffi_close_library line="14" static="1"><d/></ffi_close_library>
+		<ffi_load_symbol line="15" static="1"><d/></ffi_load_symbol>
+		<meta><m n=":directlyUsed"/></meta>
+	</class>
+	<class path="ffi.native.neko.Util" params="" file="ffi/native/neko/Util.hx">
+		<toHaxe get="inline" set="null" line="5" static="1"><f a="v">
+	<d/>
+	<d/>
+</f></toHaxe>
+		<fromHaxe get="inline" set="null" line="7" static="1"><f a="v">
+	<d/>
+	<d/>
+</f></fromHaxe>
+		<load get="inline" set="null" line="9" static="1"><f a="fname:args">
+	<c path="String"/>
+	<x path="Int"/>
+	<d/>
+</f></load>
+		<meta><m n=":allow"><e>ffi</e></m></meta>
+	</class>
 	<abstract path="haxe.Function" params="" file="/usr/share/haxe/std/haxe/Constraints.hx" module="haxe.Constraints">
 		<this><d/></this>
 		<haxe_doc>This type unifies with any function type.
@@ -1023,6 +1454,13 @@
   * the same underlying type, even though it might be different on
   * specific platforms.</haxe_doc>
 	</typedef>
+	<abstract path="haxe.ds.HashMap" params="K:V" file="/usr/share/haxe/std/haxe/ds/HashMap.hx">
+		<this><c path="haxe.ds._HashMap.HashMapData">
+	<c path="haxe.ds.HashMap.K"/>
+	<c path="haxe.ds.HashMap.V"/>
+</c></this>
+		<impl><class path="haxe.ds._HashMap.HashMap_Impl_" params="" file="/usr/share/haxe/std/haxe/ds/HashMap.hx" private="1" module="haxe.ds.HashMap"><meta><m n=":keep"/></meta></class></impl>
+	</abstract>
 	<typedef path="haxe.io.BytesData" params="" file="/usr/share/haxe/std/haxe/io/BytesData.hx"><c path="neko.NativeString"/></typedef>
 	<class path="haxe.io.Eof" params="" file="/usr/share/haxe/std/haxe/io/Eof.hx">
 		<toString set="method" line="30">
@@ -1032,5 +1470,435 @@
 		<haxe_doc>This exception is raised when reading while data is no longer available in the [Input].</haxe_doc>
 		<meta><m n=":keep"/></meta>
 	</class>
+	<class path="haxe.io.Path" params="" file="/usr/share/haxe/std/haxe/io/Path.hx">
+		<removeTrailingSlashes public="1" set="method" line="290" static="1">
+			<f a="path">
+				<c path="String"/>
+				<c path="String"/>
+			</f>
+			<meta><m n=":require"><e><![CDATA[haxe_ver>=3.1]]></e></m></meta>
+			<haxe_doc>Removes trailing slashes from `path`.
+
+		If `path` does not end with a `/` or `\`, `path` is returned unchanged.
+
+		Otherwise the substring of `path` excluding the trailing slashes or
+		backslashes is returned.
+
+		If `path` is null, the result is unspecified.</haxe_doc>
+		</removeTrailingSlashes>
+		<haxe_doc>This class provides a convenient way of working with paths. It supports the
+	common path formats:
+
+	- directory1/directory2/filename.extension
+	- directory1\directory2\filename.excention</haxe_doc>
+		<meta>
+			<m n=":keep"/>
+			<m n=":directlyUsed"/>
+		</meta>
+	</class>
+	<typedef path="haxe.macro.Position" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<min><x path="Int"/></min>
+	<max><x path="Int"/></max>
+	<file><c path="String"/></file>
+</a></typedef>
+	<typedef path="haxe.macro.Expr" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx"><a>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<expr><e path="haxe.macro.ExprDef"/></expr>
+</a></typedef>
+	<typedef path="haxe.macro.ExprOf" params="T" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><t path="haxe.macro.Expr"/></typedef>
+	<typedef path="haxe.macro.Case" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<values><c path="Array"><t path="haxe.macro.Expr"/></c></values>
+	<guard>
+		<t path="Null"><t path="Null"><t path="haxe.macro.Expr"/></t></t>
+		<meta><m n=":optional"/></meta>
+	</guard>
+	<expr><t path="Null"><t path="haxe.macro.Expr"/></t></expr>
+</a></typedef>
+	<typedef path="haxe.macro.Var" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<type><t path="Null"><e path="haxe.macro.ComplexType"/></t></type>
+	<name><c path="String"/></name>
+	<expr><t path="Null"><t path="haxe.macro.Expr"/></t></expr>
+</a></typedef>
+	<typedef path="haxe.macro.Catch" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<type><e path="haxe.macro.ComplexType"/></type>
+	<name><c path="String"/></name>
+	<expr><t path="haxe.macro.Expr"/></expr>
+</a></typedef>
+	<typedef path="haxe.macro.TypePath" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<sub>
+		<t path="Null"><t path="Null"><c path="String"/></t></t>
+		<meta><m n=":optional"/></meta>
+	</sub>
+	<params>
+		<t path="Null"><c path="Array"><e path="haxe.macro.TypeParam"/></c></t>
+		<meta><m n=":optional"/></meta>
+	</params>
+	<pack><c path="Array"><c path="String"/></c></pack>
+	<name><c path="String"/></name>
+</a></typedef>
+	<typedef path="haxe.macro.TypeParamDecl" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<params>
+		<t path="Null"><c path="Array"><t path="haxe.macro.TypeParamDecl"/></c></t>
+		<meta><m n=":optional"/></meta>
+	</params>
+	<name><c path="String"/></name>
+	<constraints>
+		<t path="Null"><c path="Array"><e path="haxe.macro.ComplexType"/></c></t>
+		<meta><m n=":optional"/></meta>
+	</constraints>
+</a></typedef>
+	<typedef path="haxe.macro.Function" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<ret><t path="Null"><e path="haxe.macro.ComplexType"/></t></ret>
+	<params>
+		<t path="Null"><c path="Array"><t path="haxe.macro.TypeParamDecl"/></c></t>
+		<meta><m n=":optional"/></meta>
+	</params>
+	<expr><t path="Null"><t path="haxe.macro.Expr"/></t></expr>
+	<args><c path="Array"><t path="haxe.macro.FunctionArg"/></c></args>
+</a></typedef>
+	<typedef path="haxe.macro.FunctionArg" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<value>
+		<t path="Null"><t path="Null"><t path="haxe.macro.Expr"/></t></t>
+		<meta><m n=":optional"/></meta>
+	</value>
+	<type><t path="Null"><e path="haxe.macro.ComplexType"/></t></type>
+	<opt>
+		<t path="Null"><x path="Bool"/></t>
+		<meta><m n=":optional"/></meta>
+	</opt>
+	<name><c path="String"/></name>
+</a></typedef>
+	<typedef path="haxe.macro.MetadataEntry" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<params>
+		<t path="Null"><c path="Array"><t path="haxe.macro.Expr"/></c></t>
+		<meta><m n=":optional"/></meta>
+	</params>
+	<name><c path="String"/></name>
+</a></typedef>
+	<typedef path="haxe.macro.Metadata" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><c path="Array"><t path="haxe.macro.MetadataEntry"/></c></typedef>
+	<typedef path="haxe.macro.Field" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<name><c path="String"/></name>
+	<meta>
+		<t path="Null"><t path="haxe.macro.Metadata"/></t>
+		<meta><m n=":optional"/></meta>
+	</meta>
+	<kind><e path="haxe.macro.FieldType"/></kind>
+	<doc>
+		<t path="Null"><t path="Null"><c path="String"/></t></t>
+		<meta><m n=":optional"/></meta>
+	</doc>
+	<access>
+		<t path="Null"><c path="Array"><e path="haxe.macro.Access"/></c></t>
+		<meta><m n=":optional"/></meta>
+	</access>
+</a></typedef>
+	<typedef path="haxe.macro.TypeDefinition" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<params>
+		<t path="Null"><c path="Array"><t path="haxe.macro.TypeParamDecl"/></c></t>
+		<meta><m n=":optional"/></meta>
+	</params>
+	<pack><c path="Array"><c path="String"/></c></pack>
+	<name><c path="String"/></name>
+	<meta>
+		<t path="Null"><t path="haxe.macro.Metadata"/></t>
+		<meta><m n=":optional"/></meta>
+	</meta>
+	<kind><e path="haxe.macro.TypeDefKind"/></kind>
+	<isExtern>
+		<t path="Null"><x path="Bool"/></t>
+		<meta><m n=":optional"/></meta>
+	</isExtern>
+	<fields><c path="Array"><t path="haxe.macro.Field"/></c></fields>
+</a></typedef>
+	<typedef path="haxe.macro.ImportExpr" params="" file="/usr/share/haxe/std/haxe/macro/Expr.hx" module="haxe.macro.Expr"><a>
+	<path><c path="Array"><a>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<name><c path="String"/></name>
+</a></c></path>
+	<mode><e path="haxe.macro.ImportMode"/></mode>
+</a></typedef>
+	<typedef path="haxe.macro.Ref" params="T" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<toString set="method"><f a=""><c path="String"/></f></toString>
+	<get set="method"><f a=""><c path="haxe.macro.Ref.T"/></f></get>
+</a></typedef>
+	<typedef path="haxe.macro.AnonType" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<status><e path="haxe.macro.AnonStatus"/></status>
+	<fields><c path="Array"><t path="haxe.macro.ClassField"/></c></fields>
+</a></typedef>
+	<typedef path="haxe.macro.TypeParameter" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<t><e path="haxe.macro.Type"/></t>
+	<name><c path="String"/></name>
+</a></typedef>
+	<typedef path="haxe.macro.BaseType" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<params><c path="Array"><t path="haxe.macro.TypeParameter"/></c></params>
+	<pack><c path="Array"><c path="String"/></c></pack>
+	<name><c path="String"/></name>
+	<module><c path="String"/></module>
+	<meta><t path="haxe.macro.MetaAccess"/></meta>
+	<isPrivate><x path="Bool"/></isPrivate>
+	<isExtern><x path="Bool"/></isExtern>
+	<exclude set="method"><f a=""><x path="Void"/></f></exclude>
+	<doc><t path="Null"><c path="String"/></t></doc>
+</a></typedef>
+	<typedef path="haxe.macro.ClassField" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<type><e path="haxe.macro.Type"/></type>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<params><c path="Array"><t path="haxe.macro.TypeParameter"/></c></params>
+	<name><c path="String"/></name>
+	<meta><t path="haxe.macro.MetaAccess"/></meta>
+	<kind><e path="haxe.macro.FieldKind"/></kind>
+	<isPublic><x path="Bool"/></isPublic>
+	<expr set="method"><f a=""><t path="Null"><t path="haxe.macro.TypedExpr"/></t></f></expr>
+	<doc><t path="Null"><c path="String"/></t></doc>
+</a></typedef>
+	<typedef path="haxe.macro.ClassType" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<superClass><t path="Null"><a>
+	<t><t path="haxe.macro.Ref"><t path="haxe.macro.ClassType"/></t></t>
+	<params><c path="Array"><e path="haxe.macro.Type"/></c></params>
+</a></t></superClass>
+	<statics><t path="haxe.macro.Ref"><c path="Array"><t path="haxe.macro.ClassField"/></c></t></statics>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<params><c path="Array"><t path="haxe.macro.TypeParameter"/></c></params>
+	<pack><c path="Array"><c path="String"/></c></pack>
+	<overrides><c path="Array"><t path="haxe.macro.Ref"><t path="haxe.macro.ClassField"/></t></c></overrides>
+	<name><c path="String"/></name>
+	<module><c path="String"/></module>
+	<meta><t path="haxe.macro.MetaAccess"/></meta>
+	<kind><e path="haxe.macro.ClassKind"/></kind>
+	<isPrivate><x path="Bool"/></isPrivate>
+	<isInterface><x path="Bool"/></isInterface>
+	<isExtern><x path="Bool"/></isExtern>
+	<interfaces><c path="Array"><a>
+	<t><t path="haxe.macro.Ref"><t path="haxe.macro.ClassType"/></t></t>
+	<params><c path="Array"><e path="haxe.macro.Type"/></c></params>
+</a></c></interfaces>
+	<init><t path="Null"><t path="haxe.macro.TypedExpr"/></t></init>
+	<fields><t path="haxe.macro.Ref"><c path="Array"><t path="haxe.macro.ClassField"/></c></t></fields>
+	<exclude set="method"><f a=""><x path="Void"/></f></exclude>
+	<doc><t path="Null"><c path="String"/></t></doc>
+	<constructor><t path="Null"><t path="haxe.macro.Ref"><t path="haxe.macro.ClassField"/></t></t></constructor>
+</a></typedef>
+	<typedef path="haxe.macro.EnumField" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<type><e path="haxe.macro.Type"/></type>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<params><c path="Array"><t path="haxe.macro.TypeParameter"/></c></params>
+	<name><c path="String"/></name>
+	<meta><t path="haxe.macro.MetaAccess"/></meta>
+	<index><x path="Int"/></index>
+	<doc><t path="Null"><c path="String"/></t></doc>
+</a></typedef>
+	<typedef path="haxe.macro.EnumType" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<params><c path="Array"><t path="haxe.macro.TypeParameter"/></c></params>
+	<pack><c path="Array"><c path="String"/></c></pack>
+	<names><c path="Array"><c path="String"/></c></names>
+	<name><c path="String"/></name>
+	<module><c path="String"/></module>
+	<meta><t path="haxe.macro.MetaAccess"/></meta>
+	<isPrivate><x path="Bool"/></isPrivate>
+	<isExtern><x path="Bool"/></isExtern>
+	<exclude set="method"><f a=""><x path="Void"/></f></exclude>
+	<doc><t path="Null"><c path="String"/></t></doc>
+	<constructs><x path="Map">
+	<c path="String"/>
+	<t path="haxe.macro.EnumField"/>
+</x></constructs>
+</a></typedef>
+	<typedef path="haxe.macro.DefType" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<type><e path="haxe.macro.Type"/></type>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<params><c path="Array"><t path="haxe.macro.TypeParameter"/></c></params>
+	<pack><c path="Array"><c path="String"/></c></pack>
+	<name><c path="String"/></name>
+	<module><c path="String"/></module>
+	<meta><t path="haxe.macro.MetaAccess"/></meta>
+	<isPrivate><x path="Bool"/></isPrivate>
+	<isExtern><x path="Bool"/></isExtern>
+	<exclude set="method"><f a=""><x path="Void"/></f></exclude>
+	<doc><t path="Null"><c path="String"/></t></doc>
+</a></typedef>
+	<typedef path="haxe.macro.AbstractType" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<unops><c path="Array"><a>
+	<postFix><x path="Bool"/></postFix>
+	<op><e path="haxe.macro.Unop"/></op>
+	<field><t path="haxe.macro.ClassField"/></field>
+</a></c></unops>
+	<type><e path="haxe.macro.Type"/></type>
+	<to><c path="Array"><a>
+	<t><e path="haxe.macro.Type"/></t>
+	<field><t path="Null"><t path="haxe.macro.ClassField"/></t></field>
+</a></c></to>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<params><c path="Array"><t path="haxe.macro.TypeParameter"/></c></params>
+	<pack><c path="Array"><c path="String"/></c></pack>
+	<name><c path="String"/></name>
+	<module><c path="String"/></module>
+	<meta><t path="haxe.macro.MetaAccess"/></meta>
+	<isPrivate><x path="Bool"/></isPrivate>
+	<isExtern><x path="Bool"/></isExtern>
+	<impl><t path="Null"><t path="haxe.macro.Ref"><t path="haxe.macro.ClassType"/></t></t></impl>
+	<from><c path="Array"><a>
+	<t><e path="haxe.macro.Type"/></t>
+	<field><t path="Null"><t path="haxe.macro.ClassField"/></t></field>
+</a></c></from>
+	<exclude set="method"><f a=""><x path="Void"/></f></exclude>
+	<doc><t path="Null"><c path="String"/></t></doc>
+	<binops><c path="Array"><a>
+	<op><e path="haxe.macro.Binop"/></op>
+	<field><t path="haxe.macro.ClassField"/></field>
+</a></c></binops>
+	<array><c path="Array"><t path="haxe.macro.ClassField"/></c></array>
+</a></typedef>
+	<typedef path="haxe.macro.MetaAccess" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type">
+		<a>
+			<remove set="method">
+				<f a="name">
+					<c path="String"/>
+					<x path="Void"/>
+				</f>
+				<haxe_doc>Removes all `name` metadata entries from the origin of `this`
+		MetaAccess.
+
+		This method might clear several metadata entries of the same name.
+
+		If a `Metadata` array is obtained through a call to `get`, a subsequent
+		call to `remove` has no effect on that array.
+
+		If `name` is null, compilation fails with an error.</haxe_doc>
+			</remove>
+			<has set="method">
+				<f a="name">
+					<c path="String"/>
+					<x path="Bool"/>
+				</f>
+				<haxe_doc>Tells if the origin of `this` MetaAccess has a `name` metadata entry.
+
+		If `name` is null, compilation fails with an error.</haxe_doc>
+			</has>
+			<get set="method">
+				<f a=""><t path="haxe.macro.Metadata"/></f>
+				<haxe_doc>Return the wrapped `Metadata` array.
+
+		Modifying this array has no effect on the origin of `this` MetaAccess.
+		The `add` and `remove` methods can be used for that.</haxe_doc>
+			</get>
+			<extract set="method">
+				<f a="name">
+					<c path="String"/>
+					<c path="Array"><t path="haxe.macro.MetadataEntry"/></c>
+				</f>
+				<haxe_doc>Extract metadata entries by given `name`.
+
+		If there's no metadata with such name, empty array is returned.
+
+		If `name` is null, compilation fails with an error.</haxe_doc>
+			</extract>
+			<add set="method">
+				<f a="name:params:pos">
+					<c path="String"/>
+					<c path="Array"><t path="haxe.macro.Expr"/></c>
+					<t path="haxe.macro.Position"/>
+					<x path="Void"/>
+				</f>
+				<haxe_doc>Adds the metadata specified by `name`, `params` and `pos` to the origin
+		of `this` MetaAccess.
+
+		Metadata names are not unique during compilation, so this method never
+		overwrites a previous metadata.
+
+		If a `Metadata` array is obtained through a call to `get`, a subsequent
+		call to `add` has no effect on that array.
+
+		If any argument is null, compilation fails with an error.</haxe_doc>
+			</add>
+		</a>
+		<haxe_doc>MetaAccess is a wrapper for the `Metadata` array. It can be used to add
+	metadata to and remove metadata from its origin.</haxe_doc>
+	</typedef>
+	<typedef path="haxe.macro.TVar" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<t set="null"><e path="haxe.macro.Type"/></t>
+	<name set="null"><c path="String"/></name>
+	<id set="null"><x path="Int"/></id>
+	<extra set="null"><t path="Null"><a>
+	<params><c path="Array"><t path="haxe.macro.TypeParameter"/></c></params>
+	<expr><t path="Null"><t path="haxe.macro.TypedExpr"/></t></expr>
+</a></t></extra>
+	<capture set="null"><x path="Bool"/></capture>
+</a></typedef>
+	<typedef path="haxe.macro.TFunc" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<t><e path="haxe.macro.Type"/></t>
+	<expr><t path="haxe.macro.TypedExpr"/></expr>
+	<args><c path="Array"><a>
+	<value><t path="Null"><e path="haxe.macro.TConstant"/></t></value>
+	<v><t path="haxe.macro.TVar"/></v>
+</a></c></args>
+</a></typedef>
+	<typedef path="haxe.macro.TypedExpr" params="" file="/usr/share/haxe/std/haxe/macro/Type.hx" module="haxe.macro.Type"><a>
+	<t><e path="haxe.macro.Type"/></t>
+	<pos><t path="haxe.macro.Position"/></pos>
+	<expr><e path="haxe.macro.TypedExprDef"/></expr>
+</a></typedef>
 	<class path="neko.NativeArray" params="T" file="/usr/share/haxe/std/neko/NativeArray.hx"><meta><m n=":keep"/></meta></class>
+	<typedef path="sys.FileStat" params="" file="/usr/share/haxe/std/sys/FileStat.hx">
+		<a>
+			<uid>
+				<x path="Int"/>
+				<haxe_doc>the user id for the file</haxe_doc>
+			</uid>
+			<size>
+				<x path="Int"/>
+				<haxe_doc>the size of the file</haxe_doc>
+			</size>
+			<rdev><x path="Int"/></rdev>
+			<nlink><x path="Int"/></nlink>
+			<mtime>
+				<c path="Date"/>
+				<haxe_doc>the last modification time for the file</haxe_doc>
+			</mtime>
+			<mode><x path="Int"/></mode>
+			<ino><x path="Int"/></ino>
+			<gid>
+				<x path="Int"/>
+				<haxe_doc>the user group id for the file</haxe_doc>
+			</gid>
+			<dev><x path="Int"/></dev>
+			<ctime>
+				<c path="Date"/>
+				<haxe_doc>the creation time for the file</haxe_doc>
+			</ctime>
+			<atime>
+				<c path="Date"/>
+				<haxe_doc>the last access time for the file (when enabled by the file system)</haxe_doc>
+			</atime>
+		</a>
+		<haxe_doc>File informations, as given by [sys.FileSystem.stat]</haxe_doc>
+	</typedef>
+	<class path="sys.FileSystem" params="" file="/usr/share/haxe/std/neko/_std/sys/FileSystem.hx">
+		<exists public="1" set="method" line="33" static="1">
+			<f a="path">
+				<c path="String"/>
+				<x path="Bool"/>
+			</f>
+			<meta><m n=":has_untyped"/></meta>
+			<haxe_doc>Tells if the file or directory specified by `path` exists.
+
+		If `path` is null, the result is unspecified.</haxe_doc>
+		</exists>
+		<sys_exists line="103" static="1"><f a="">
+	<unknown/>
+	<x path="Bool"/>
+</f></sys_exists>
+		<haxe_doc>This class allows you to get information about the files and directories.
+
+	See `sys.io.File` for the complementary file API.</haxe_doc>
+		<meta>
+			<m n=":keep"/>
+			<m n=":directlyUsed"/>
+			<m n=":coreApi"/>
+		</meta>
+	</class>
 </haxe>
