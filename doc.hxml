@@ -1,5 +1,6 @@
 -cp src
 -xml doc/doc.xml
 --macro include('ffi')
+--macro exclude('ffi.native')
 -D doc
 -neko _
