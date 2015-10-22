@@ -1,10 +1,9 @@
 package ffi.native.java;
-import java.lang.Class in JClass;
 import haxe.macro.Expr;
 import haxe.macro.Type;
 import com.sun.jna.*;
 class Type {
-	public var jtype(default, null):JClass<Dynamic>;
+	public var jtype(default, null):java.lang.Class<Dynamic>;
 	public var type(default, null):Int;
 	public var size(get, never):Int;
 	public var alignment(get, never):Int;
