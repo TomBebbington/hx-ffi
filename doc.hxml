@@ -6,5 +6,6 @@
 --macro include('ffi.Pointer')
 --macro include('ffi.Status')
 --macro include('ffi.Type')
+--macro exclude('haxe')
 -D doc
 -neko _
