@@ -5,14 +5,16 @@
 	"tags": [
 		"neko",
 		"cpp",
+		"js",
+		"node",
 		"java",
 		"native",
 		"ffi",
 		"binding"
 	],
 	"description": "Easy FFI for accessing native shared libraries",
-	"version": "0.2.0",
-	"releasenote": "Beta release",
+	"version": "0.3.0",
+	"releasenote": "TypeKind and Status are enums; types have universal string reperesentations",
 	"contributors": [
 		"TopHattedCoder"
 	],
