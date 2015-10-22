@@ -1,9 +1,9 @@
 package ffi;
-#if(!macro && (neko || cpp))
+#if(!macro && !doc && (neko || cpp))
 typedef Function = ffi.native.neko.Function;
-#elseif java
+#elseif(!doc && java)
 typedef Function = ffi.native.java.Function;
-#elseif(nodejs && js)
+#elseif(!doc && nodejs && js)
 typedef Function = ffi.native.node.Function;
 #else
 /** A pointer to a native function **/

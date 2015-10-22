@@ -2,4 +2,4 @@
 -xml doc/doc.xml
 --macro include('ffi')
 -D doc
---no-output
+-neko _

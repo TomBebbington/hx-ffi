@@ -1,10 +1,10 @@
 package ffi;
 
-#if(!macro && (neko || cpp))
+#if(!doc && !macro && (neko || cpp))
 typedef Pointer = ffi.native.neko.Pointer;
-#elseif java
+#elseif(!doc && java)
 typedef Pointer = ffi.native.java.Pointer;
-#elseif(nodejs && js)
+#elseif(!doc && nodejs && js)
 typedef Pointer = ffi.native.node.Pointer;
 #else
 /** Represents a pointer **/

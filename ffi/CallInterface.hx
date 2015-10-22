@@ -1,10 +1,10 @@
 package ffi;
 
-#if(!macro && (neko || cpp))
+#if(!macro && !doc && (neko || cpp))
 typedef CallInterface = ffi.native.neko.CallInterface;
-#elseif java
+#elseif(!doc && java)
 typedef CallInterface = ffi.native.java.CallInterface;
-#elseif(nodejs && js)
+#elseif(!doc && nodejs && js)
 typedef CallInterface = ffi.native.node.CallInterface;
 #else
 /** Describes a callable function's interface. **/

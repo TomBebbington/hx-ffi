@@ -1,10 +1,10 @@
 package ffi;
 
-#if(!macro && (neko || cpp))
+#if(!doc && !macro && (neko || cpp))
 typedef Type = ffi.native.neko.Type;
-#elseif java
+#elseif(!doc && java)
 typedef Type = ffi.native.java.Type;
-#elseif(nodejs && js)
+#elseif(!doc && nodejs && js)
 typedef Type = ffi.native.node.Type;
 #else
 /** A native type. **/
