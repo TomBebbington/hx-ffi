@@ -1,6 +1,5 @@
--neko _
 -cp src
 -xml doc/doc.xml
+--macro include('ffi')
 -D doc
 --no-output
---macro include('ffi', true, null, ['src'])
