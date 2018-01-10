@@ -13,7 +13,7 @@ abstract Pointer(Dynamic) {
 	public inline function free():Void
 		ffi_ptr_free(this);
 	public inline function getBytes(length:Int):haxe.io.BytesData
-		return neko.NativeString.ofString(ffi_ptr_get_str(this, length));
+		return haxe.io.Bytes.ofString(ffi_ptr_get_str(this, length)).getData();
 	static var ffi_ptr_get_str:Dynamic = Util.load("ptr_get_str", 2);
 	static var ffi_ptr_from_str:Dynamic = Util.load("ptr_from_str", 1);
 	static var ffi_ptr_free:Dynamic = Util.load("ptr_free", 1);
